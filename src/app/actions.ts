@@ -3,7 +3,6 @@
 import { z } from "zod";
 import { inferIndustryFromUrl } from "@/ai/flows/infer-industry-from-url";
 import { estimateEmployeeCountFromWebsite } from "@/ai/flows/estimate-employee-count-from-website";
-import { publicCompanyData, type IndustryKey } from "@/lib/public-company-data";
 import { supabase } from "@/lib/supabaseClient";
 
 
@@ -12,47 +11,10 @@ const PredictionResultSchema = z.object({
   confidence: z.number(),
   inferredIndustry: z.string(),
   inferredEmployees: z.number(),
-  inferredTraffic: z.number(),
-  industryKey: z.string(),
   url: z.string(),
 });
 
 export type PredictionResult = z.infer<typeof PredictionResultSchema>;
-
-function getIndustryKey(industry: string): IndustryKey {
-    const lowerIndustry = industry.toLowerCase();
-    if (lowerIndustry.includes('tech') || lowerIndustry.includes('software') || lowerIndustry.includes('saas') || lowerIndustry.includes('ai')) {
-        return 'tech';
-    }
-    if (lowerIndustry.includes('retail') || lowerIndustry.includes('e-commerce') || lowerIndustry.includes('shop')) {
-        return 'retail';
-    }
-    if (lowerIndustry.includes('manufacturing') || lowerIndustry.includes('industrial')) {
-        return 'manufacturing';
-    }
-    return 'default';
-}
-
-function estimateTraffic(url: string, industryKey: IndustryKey): number {
-    const cleanedUrl = url.toLowerCase().replace(/^(https?:\/\/)?(www\.)?/, '').split('/')[0];
-    const lengthFactor = cleanedUrl.length;
-    const dotCount = cleanedUrl.split('.').length - 1;
-
-    let traffic = 0;
-    
-    if (industryKey === 'tech') {
-        traffic = Math.min(2000000, (lengthFactor * 7000) + (dotCount * 30000));
-    } else if (industryKey === 'retail') {
-        traffic = Math.min(5000000, (lengthFactor * 10000) + (dotCount * 50000));
-    } else { 
-        traffic = Math.min(500000, (lengthFactor * 5000) + (dotCount * 10000));
-    }
-    
-    traffic = Math.max(1000, traffic);
-    traffic = Math.round(traffic);
-
-    return traffic;
-}
 
 
 export async function getPrediction(url: string): Promise<PredictionResult> {
@@ -63,46 +25,39 @@ export async function getPrediction(url: string): Promise<PredictionResult> {
     ]);
 
     const inferredIndustryName = industryResult.industry;
-    const industryKey = getIndustryKey(inferredIndustryName);
     
-    const { data: industryData, error: dbError } = await supabase
+    const { data: publicCompanies, error: dbError } = await supabase
       .from('turnover')
-      .select(`
-        name,
-        avg_employees,
-        avg_web_traffic,
-        revenue_per_employee,
-        base_revenue
-      `)
-      .eq('industry_key', industryKey)
-      .single();
+      .select('turnover, employees');
 
-    if (dbError || !industryData) {
+    if (dbError || !publicCompanies || publicCompanies.length === 0) {
         console.error("Supabase error:", dbError);
-        throw new Error("Could not retrieve industry data. Please check the Supabase connection and ensure the 'turnover' table is set up correctly.");
+        throw new Error("Could not retrieve company data. Please check the Supabase connection and ensure the 'turnover' table is populated correctly.");
     }
 
-
-    const employees = employeeResult.employeeCount;
-    const traffic = estimateTraffic(url, industryKey as IndustryKey);
-
-    // Simulated Prediction Model from prototype
-    const employeeContribution = employees * industryData.revenue_per_employee * 0.3;
-    const trafficContribution = (traffic / industryData.avg_web_traffic) * industryData.base_revenue * 0.7;
-    const turnover = industryData.base_revenue * 0.1 + employeeContribution * 0.8 + trafficContribution * 0.8;
+    // Calculate average revenue per employee from public data
+    const totalRevenue = publicCompanies.reduce((acc, c) => acc + c.turnover, 0);
+    const totalEmployees = publicCompanies.reduce((acc, c) => acc + c.employees, 0);
     
-    const predictedTurnover = Math.max(0, turnover);
+    if (totalEmployees === 0) {
+      throw new Error("Total employees in the reference data is zero, cannot calculate revenue per employee.");
+    }
 
+    const avgRevenuePerEmployee = totalRevenue / totalEmployees;
+
+    const inferredEmployees = employeeResult.employeeCount;
+
+    // New simplified prediction model
+    const predictedTurnover = inferredEmployees * avgRevenuePerEmployee;
+    
     // Confidence score from prototype
-    const confidence = Math.min(95, 65 + Math.min(30, url.length));
+    const confidence = Math.min(95, 60 + Math.floor(Math.log(inferredEmployees) * 5) + Math.min(20, url.length));
 
     return {
       predictedTurnover,
       confidence,
-      inferredIndustry: industryData.name,
-      inferredEmployees: employees,
-      inferredTraffic: traffic,
-      industryKey,
+      inferredIndustry: inferredIndustryName,
+      inferredEmployees,
       url,
     };
   } catch (error) {

@@ -14,7 +14,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { getPrediction, type PredictionResult } from "@/app/actions";
 import { formatNumber } from "@/lib/utils";
-import { publicCompanyData, type IndustryKey } from "@/lib/public-company-data";
 import { formatLargeNumber } from "@/lib/utils";
 
 
@@ -96,13 +95,11 @@ export default function InteractiveDemo() {
                       <div className="space-y-2 pt-1">
                         <Skeleton className="h-4 w-4/5" />
                         <Skeleton className="h-4 w-3/5" />
-                        <Skeleton className="h-4 w-1/2" />
                       </div>
                     ) : prediction ? (
                       <>
                         <p className="text-sm text-muted-foreground">Industry: <span className="font-bold text-primary">{prediction.inferredIndustry}</span></p>
                         <p className="text-sm text-muted-foreground">Employees: <span className="font-bold text-foreground">{formatLargeNumber(prediction.inferredEmployees)}</span></p>
-                        <p className="text-sm text-muted-foreground">Web Traffic: <span className="font-bold text-foreground">{formatLargeNumber(prediction.inferredTraffic)}</span></p>
                       </>
                     ) : (
                          <p className="text-sm text-muted-foreground italic">Enter a URL to see inferred data.</p>
