@@ -49,7 +49,6 @@ function estimateTraffic(url: string, industryKey: IndustryKey): number {
     }
     
     traffic = Math.max(1000, traffic);
-    // Removed Math.random() to prevent hydration errors
     traffic = Math.round(traffic);
 
     return traffic;
@@ -67,7 +66,7 @@ export async function getPrediction(url: string): Promise<PredictionResult> {
     const industryKey = getIndustryKey(inferredIndustryName);
     
     const { data: industryData, error: dbError } = await supabase
-      .from('industry_benchmarks')
+      .from('turnover')
       .select(`
         name,
         avg_employees,
@@ -80,7 +79,7 @@ export async function getPrediction(url: string): Promise<PredictionResult> {
 
     if (dbError || !industryData) {
         console.error("Supabase error:", dbError);
-        throw new Error("Could not retrieve industry data. Please check the Supabase connection and ensure the 'industry_benchmarks' table is set up correctly.");
+        throw new Error("Could not retrieve industry data. Please check the Supabase connection and ensure the 'turnover' table is set up correctly.");
     }
 
 
