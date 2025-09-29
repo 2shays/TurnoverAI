@@ -24,7 +24,7 @@ export default function Home() {
         <InteractiveDemo />
       </main>
       <footer className="py-6 text-center text-sm text-muted-foreground">
-        © {year || new Date().getFullYear()} TurnoverAI. All rights reserved.
+        © {year} TurnoverAI. All rights reserved.
       </footer>
     </div>
   );
