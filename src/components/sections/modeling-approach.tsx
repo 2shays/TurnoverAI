@@ -1,5 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { MoveRight } from "lucide-react"
+import React from "react"
 
 const steps = [
     { title: "1. URL Analysis", description: "Infer industry and extract/infer scale data.", highlighted: false },
@@ -19,8 +20,8 @@ export default function ModelingApproachSection() {
             </div>
             <div className="flex flex-col md:flex-row items-center justify-center gap-4">
                 {steps.map((step, index) => (
-                    <>
-                        <Card key={step.title} className={`w-full md:w-52 text-center ${step.highlighted ? 'bg-primary/10 border-primary/50' : ''}`}>
+                    <React.Fragment key={step.title}>
+                        <Card className={`w-full md:w-52 text-center ${step.highlighted ? 'bg-primary/10 border-primary/50' : ''}`}>
                             <CardHeader className="pb-2">
                                 <CardTitle className={`text-base font-semibold ${step.highlighted ? 'text-primary' : 'text-foreground'}`}>{step.title}</CardTitle>
                             </CardHeader>
@@ -31,7 +32,7 @@ export default function ModelingApproachSection() {
                         {index < steps.length - 1 && (
                             <MoveRight className="text-muted-foreground/50 h-8 w-8 shrink-0 md:rotate-0 rotate-90" />
                         )}
-                    </>
+                    </React.Fragment>
                 ))}
             </div>
         </section>
