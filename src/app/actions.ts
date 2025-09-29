@@ -16,16 +16,44 @@ const PredictionResultSchema = z.object({
 
 export type PredictionResult = z.infer<typeof PredictionResultSchema>;
 
+export type Industry = {
+  value: string;
+  label: string;
+}
 
-export async function getPrediction(url: string): Promise<PredictionResult> {
+export async function getIndustries(): Promise<Industry[]> {
+    const { data, error } = await supabase
+      .from('industries')
+      .select('name');
+
+    if (error) {
+        console.error("Supabase error fetching industries:", error);
+        return [];
+    }
+
+    return data.map(item => ({ value: item.name, label: item.name }));
+}
+
+
+export async function getPrediction(
+  url: string,
+  manualEmployees?: number,
+  manualIndustry?: string,
+): Promise<PredictionResult> {
   try {
-    const [industryResult, employeeResult] = await Promise.all([
-      inferIndustryFromUrl({ url }),
-      estimateEmployeeCountFromWebsite({ websiteUrl: url }),
-    ]);
-
-    const inferredIndustryName = industryResult.industry;
+    let inferredIndustryName = manualIndustry;
+    if (!inferredIndustryName) {
+      const industryResult = await inferIndustryFromUrl({ url });
+      inferredIndustryName = industryResult.industry;
+    }
     
+    let inferredEmployees = manualEmployees;
+    if (!inferredEmployees) {
+      const employeeResult = await estimateEmployeeCountFromWebsite({ websiteUrl: url });
+      inferredEmployees = employeeResult.employeeCount;
+    }
+
+
     const { data: publicCompanies, error: dbError } = await supabase
       .from('turnover')
       .select('turnover, employees');
@@ -45,8 +73,6 @@ export async function getPrediction(url: string): Promise<PredictionResult> {
 
     const avgRevenuePerEmployee = totalRevenue / totalEmployees;
 
-    const inferredEmployees = employeeResult.employeeCount;
-
     // New simplified prediction model
     const predictedTurnover = inferredEmployees * avgRevenuePerEmployee;
     
@@ -56,7 +82,7 @@ export async function getPrediction(url: string): Promise<PredictionResult> {
     return {
       predictedTurnover,
       confidence,
-      inferredIndustry: inferredIndustryName,
+      inferredIndustry: inferredIndustryName!,
       inferredEmployees,
       url,
     };
