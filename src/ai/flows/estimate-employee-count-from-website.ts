@@ -35,18 +35,19 @@ const estimateEmployeeCountPrompt = ai.definePrompt({
   name: 'estimateEmployeeCountPrompt',
   input: {schema: EstimateEmployeeCountFromWebsiteInputSchema},
   output: {schema: EstimateEmployeeCountFromWebsiteOutputSchema},
-  prompt: `You are an expert in estimating the number of employees a company has based on its website.
+  prompt: `You are an expert business analyst specializing in estimating company size and revenue based on publicly available digital footprints.
 
-  Analyze the content and complexity of the website at the following URL: {{{websiteUrl}}}.
+  Your task is to analyze the website at the provided URL: {{{websiteUrl}}}.
 
-  Consider factors such as:
-  - Website complexity (number of pages, features, etc.)
-  - Content volume (amount of text, images, etc.)
-  - Assumed growth signals (mentions of hiring, new products, etc.)
-  - Domain reputation (age, authority, etc.)
+  Based on a thorough analysis of the website's content, structure, and apparent business model, provide a thoughtful estimate of the company's employee count.
 
-  Provide an estimate of the number of employees and a detailed reasoning for your estimate.
-  Include explanation of how the estimate was created.
+  Your reasoning should consider factors like:
+  - The quality and complexity of the website (e.g., custom design, number of pages, advanced features like user accounts or e-commerce).
+  - The company's products or services and their likely market (e.g., enterprise B2B software vs. a local consumer service).
+  - Language and content (e.g., 'careers' pages, mentions of multiple office locations, investor relations sections, press releases).
+  - The overall perceived maturity and scale of the operation as suggested by its online presence.
+
+  Provide your estimated employee count and a detailed reasoning that explains how you arrived at your conclusion, referencing specific observations from the website.
 
   Ensure the output is valid JSON matching the EstimateEmployeeCountFromWebsiteOutputSchema schema.
   `,
