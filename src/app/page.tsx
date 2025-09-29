@@ -8,7 +8,7 @@ import ModelingApproachSection from "@/components/sections/modeling-approach";
 import InteractiveDemo from "@/components/sections/interactive-demo";
 
 export default function Home() {
-  const [year, setYear] = useState(new Date().getFullYear());
+  const [year, setYear] = useState<number | null>(null);
 
   useEffect(() => {
     setYear(new Date().getFullYear());
@@ -24,7 +24,7 @@ export default function Home() {
         <InteractiveDemo />
       </main>
       <footer className="py-6 text-center text-sm text-muted-foreground">
-        © {year} TurnoverAI. All rights reserved.
+        © {year || new Date().getFullYear()} TurnoverAI. All rights reserved.
       </footer>
     </div>
   );
