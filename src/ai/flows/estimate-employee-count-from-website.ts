@@ -37,17 +37,21 @@ const estimateEmployeeCountPrompt = ai.definePrompt({
   output: {schema: EstimateEmployeeCountFromWebsiteOutputSchema},
   prompt: `You are an expert business analyst specializing in estimating company size based on public web data.
 
-  Your task is to analyze the website at the provided URL: {{{websiteUrl}}} and provide a realistic estimate of the company's employee count.
+  Your task is to provide a realistic estimate of a company's employee count.
 
-  Perform a thorough analysis of the website, looking for signals of company size. Your reasoning should consider factors like:
-  - **Team & Careers:** Check for "About Us", "Team", or "Careers" pages. The number of open positions or listed team members is a strong signal.
-  - **Products & Services:** A large and complex portfolio of products or services suggests a larger team is needed for development, sales, and support.
-  - **Locations:** Mentions of multiple offices or international locations indicate a larger, more distributed workforce.
-  - **Website Quality & Complexity:** A highly polished, custom-designed website with many pages and features (e.g., e-commerce, user accounts) often correlates with a larger company than a simple template-based site.
-  - **Client & Partner Logos:** A long list of well-known clients or partners can suggest a company with significant operational capacity.
-  - **Language and Tone:** Is the language geared towards enterprise clients or small businesses? This can hint at the scale of their operations.
+  First, perform a thorough analysis of the website at the provided URL: {{{websiteUrl}}}.
+  
+  Then, perform a web search to find external information about the company to corroborate your findings. Look for LinkedIn company profiles, news articles, or business directory listings that mention employee numbers.
 
-  Based on these factors, provide an estimated employee count. Avoid single-digit estimates unless the website explicitly looks like a personal portfolio or a solo venture. Provide detailed reasoning for your estimate, referencing specific observations from the website.
+  Your final reasoning should synthesize information from both the company's website and the external sources you find. Consider factors like:
+  - **Team & Careers:** Check for "About Us", "Team", or "Careers" pages on the primary website. The number of open positions or listed team members is a strong signal.
+  - **External Profiles:** Use your web search to find the company's LinkedIn page and note the employee count listed there. This is a very strong indicator.
+  - **Products & Services:** A large and complex portfolio of products or services suggests a larger team.
+  - **Locations:** Mentions of multiple offices or international locations indicate a larger workforce.
+  - **Website Quality & Complexity:** A simple website might indicate a smaller team, but this can be misleading. Always cross-reference with external search results.
+  - **Client & Partner Logos:** A long list of well-known clients can suggest a company with significant operational capacity.
+
+  Based on a combination of these factors, provide a single, most likely estimated employee count. Provide detailed reasoning for your estimate, referencing specific observations from the website and the external sources you discovered in your web search. Avoid single-digit estimates unless all sources strongly indicate a solo venture.
 
   Ensure the output is valid JSON matching the EstimateEmployeeCountFromWebsiteOutputSchema schema.
   `,
