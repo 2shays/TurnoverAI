@@ -4,6 +4,8 @@ import { z } from "zod";
 import { inferIndustryFromUrl } from "@/ai/flows/infer-industry-from-url";
 import { estimateEmployeeCountFromWebsite } from "@/ai/flows/estimate-employee-count-from-website";
 import { publicCompanyData, type IndustryKey } from "@/lib/public-company-data";
+import { supabase } from "@/lib/supabaseClient";
+
 
 const PredictionResultSchema = z.object({
   predictedTurnover: z.number(),
@@ -63,15 +65,32 @@ export async function getPrediction(url: string): Promise<PredictionResult> {
 
     const inferredIndustryName = industryResult.industry;
     const industryKey = getIndustryKey(inferredIndustryName);
-    const industryData = publicCompanyData[industryKey];
+    
+    const { data: industryData, error: dbError } = await supabase
+      .from('industry_benchmarks')
+      .select(`
+        name,
+        avg_employees,
+        avg_web_traffic,
+        revenue_per_employee,
+        base_revenue
+      `)
+      .eq('industry_key', industryKey)
+      .single();
+
+    if (dbError || !industryData) {
+        console.error("Supabase error:", dbError);
+        throw new Error("Could not retrieve industry data. Please check the Supabase connection and ensure the 'industry_benchmarks' table is set up correctly.");
+    }
+
 
     const employees = employeeResult.employeeCount;
-    const traffic = estimateTraffic(url, industryKey);
+    const traffic = estimateTraffic(url, industryKey as IndustryKey);
 
     // Simulated Prediction Model from prototype
-    const employeeContribution = employees * industryData.revenuePerEmployee * 0.3;
-    const trafficContribution = (traffic / industryData.avgWebTraffic) * industryData.baseRevenue * 0.7;
-    const turnover = industryData.baseRevenue * 0.1 + employeeContribution * 0.8 + trafficContribution * 0.8;
+    const employeeContribution = employees * industryData.revenue_per_employee * 0.3;
+    const trafficContribution = (traffic / industryData.avg_web_traffic) * industryData.base_revenue * 0.7;
+    const turnover = industryData.base_revenue * 0.1 + employeeContribution * 0.8 + trafficContribution * 0.8;
     
     const predictedTurnover = Math.max(0, turnover);
 
@@ -89,6 +108,9 @@ export async function getPrediction(url: string): Promise<PredictionResult> {
     };
   } catch (error) {
     console.error("Error in getPrediction action:", error);
+    if (error instanceof Error) {
+        throw new Error(error.message);
+    }
     // Fallback to a default error state or rethrow
     throw new Error("Failed to generate prediction. Please try another URL.");
   }
