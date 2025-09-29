@@ -4,7 +4,6 @@ import { useState, useTransition, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Bar, BarChart, CartesianGrid, Legend, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -14,41 +13,16 @@ import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useToast } from "@/hooks/use-toast";
 import { getPrediction, type PredictionResult } from "@/app/actions";
+import { formatNumber } from "@/lib/utils";
 import { publicCompanyData, type IndustryKey } from "@/lib/public-company-data";
-import { formatLargeNumber, formatNumber } from "@/lib/utils";
+import { formatLargeNumber } from "@/lib/utils";
+
 
 const FormSchema = z.object({
   url: z.string().min(4, {
     message: "Please enter a valid website address.",
   }),
 });
-
-const ChartTooltipContent = ({ active, payload, label }: any) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="rounded-lg border bg-background p-2 shadow-sm">
-          <div className="grid grid-cols-2 gap-2">
-            <div className="flex flex-col space-y-1">
-                <span className="text-[0.70rem] uppercase text-muted-foreground">
-                    {label}
-                </span>
-            </div>
-            {payload.map((item: any) => (
-                <div key={item.name} className="flex flex-col space-y-1">
-                    <span className="text-[0.70rem] uppercase" style={{color: item.color}}>
-                        {item.name}
-                    </span>
-                    <span className="font-bold text-muted-foreground">
-                        {formatLargeNumber(item.value)}
-                    </span>
-                </div>
-            ))}
-          </div>
-        </div>
-      );
-    }
-    return null;
-};
 
 
 export default function InteractiveDemo() {
@@ -83,15 +57,10 @@ export default function InteractiveDemo() {
     onSubmit({ url: "www.turnoverai.com" });
   }, []);
 
-  const chartData = prediction ? [
-    { name: "Employees", "Your Company": prediction.inferredEmployees, "Industry Average": publicCompanyData[prediction.industryKey as IndustryKey].avgEmployees },
-    { name: "Web Traffic", "Your Company": prediction.inferredTraffic, "Industry Average": publicCompanyData[prediction.industryKey as IndustryKey].avgWebTraffic },
-  ] : [];
-
   return (
     <section id="demo" className="scroll-mt-20">
       <div className="text-center mb-12">
-        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 font-headline">Interactive Prediction Demo</h2>
+        <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 font-headline">Turnover Prediction</h2>
         <p className="max-w-3xl mx-auto text-lg text-muted-foreground">
           Enter a company's website address below. Our AI will infer the industry and operational scale, then provide a turnover prediction benchmarked against relevant public companies.
         </p>
@@ -141,44 +110,22 @@ export default function InteractiveDemo() {
                 </CardContent>
             </Card>
           </div>
-          <div className="lg:col-span-8">
-            <div className="text-center lg:text-left mb-6">
+          <div className="lg:col-span-8 flex flex-col justify-center items-center">
+            <div className="text-center w-full">
               <h3 className="text-xl font-semibold text-foreground font-headline">Prediction Results</h3>
-              <div className="flex flex-col md:flex-row items-center md:items-end justify-center lg:justify-start gap-4 md:gap-8 mt-4">
+              <div className="flex flex-col items-center gap-4 mt-4">
                 <div>
                   <p className="text-muted-foreground">Predicted Annual Turnover</p>
                   {isPending ? <Skeleton className="h-10 w-40 mt-1" /> : <p className="text-4xl font-bold text-primary">{prediction ? formatNumber(prediction.predictedTurnover) : "$--"}</p>}
                 </div>
-                <div className="w-full md:w-48">
-                  <p className="text-muted-foreground">Confidence Score</p>
-                  {isPending ? <Skeleton className="h-2.5 w-full mt-2" /> : <Progress value={prediction?.confidence || 0} className="mt-1.5 h-2.5" indicatorClassName="bg-accent" />}
+                <div className="w-full max-w-sm">
+                  <div className="flex justify-between items-center mb-1">
+                    <p className="text-muted-foreground">Confidence Score</p>
+                    {isPending ? <Skeleton className="h-5 w-10" /> : <p className="text-lg font-bold text-accent">{prediction ? `${prediction.confidence}%` : '--%'}</p>}
+                  </div>
+                  {isPending ? <Skeleton className="h-2.5 w-full mt-2" /> : <Progress value={prediction?.confidence || 0} className="h-2.5" indicatorClassName="bg-accent" />}
                 </div>
               </div>
-            </div>
-            <div className="h-[40vh] max-h-[450px]">
-              {isPending ? (
-                <div className="w-full h-full flex items-center justify-center bg-secondary/30 rounded-lg"><Skeleton className="w-full h-full" /></div>
-              ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={chartData}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} />
-                    <XAxis dataKey="name" tickLine={false} axisLine={false} tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }} />
-                    <YAxis 
-                        type="number" 
-                        scale="log" 
-                        domain={['auto', 'auto']}
-                        tickFormatter={(value) => formatLargeNumber(parseInt(value))} 
-                        tickLine={false} 
-                        axisLine={false}
-                        tick={{ fill: 'hsl(var(--muted-foreground))', fontSize: 12 }}
-                     />
-                    <Tooltip content={<ChartTooltipContent />} cursor={{fill: 'hsl(var(--muted))', opacity: '0.3'}}/>
-                    <Legend iconType="circle" wrapperStyle={{paddingTop: '20px'}} formatter={(value) => <span className="text-muted-foreground">{value}</span>} />
-                    <Bar dataKey="Your Company" fill="hsl(var(--primary))" radius={[4, 4, 0, 0]} />
-                    <Bar dataKey="Industry Average" fill="hsl(var(--chart-2))" radius={[4, 4, 0, 0]} />
-                  </BarChart>
-                </ResponsiveContainer>
-              )}
             </div>
           </div>
         </div>

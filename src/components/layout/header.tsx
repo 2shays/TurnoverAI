@@ -12,7 +12,7 @@ const navItems = [
     { href: '#overview', label: 'Overview' },
     { href: '#data-sources', label: 'Data Sources' },
     { href: '#modeling-approach', label: 'Modeling Approach' },
-    { href: '#demo', label: 'Interactive Demo' },
+    { href: '#demo', label: 'Turnover Prediction' },
 ];
 
 export default function Header() {
