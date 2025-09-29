@@ -47,7 +47,8 @@ function estimateTraffic(url: string, industryKey: IndustryKey): number {
     }
     
     traffic = Math.max(1000, traffic);
-    traffic = Math.round(traffic * (0.9 + Math.random() * 0.2));
+    // Removed Math.random() to prevent hydration errors
+    traffic = Math.round(traffic);
 
     return traffic;
 }
