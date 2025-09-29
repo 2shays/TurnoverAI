@@ -113,17 +113,26 @@ export default function InteractiveDemo() {
                 <div className="space-y-4 rounded-md border p-4">
                     <p className="text-sm font-medium text-center">Provide Manual Data (Optional)</p>
                     <FormField
-                    control={form.control}
-                    name="employees"
-                    render={({ field }) => (
-                        <FormItem>
-                        <FormLabel>Employee Count</FormLabel>
-                        <FormControl>
-                            <Input type="number" placeholder="e.g., 50" {...field} onChange={event => field.onChange(+event.target.value)} />
-                        </FormControl>
-                        <FormMessage />
-                        </FormItem>
-                    )}
+                      control={form.control}
+                      name="employees"
+                      render={({ field }) => (
+                          <FormItem>
+                          <FormLabel>Employee Count</FormLabel>
+                          <FormControl>
+                              <Input
+                                type="number"
+                                placeholder="e.g., 50"
+                                {...field}
+                                value={field.value ?? ""}
+                                onChange={event => {
+                                  const value = event.target.value;
+                                  field.onChange(value === '' ? undefined : +value);
+                                }}
+                              />
+                          </FormControl>
+                          <FormMessage />
+                          </FormItem>
+                      )}
                     />
                     <FormField
                     control={form.control}
