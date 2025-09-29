@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -32,11 +32,13 @@ export default function InteractiveDemo() {
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
-      url: "www.turnoverai.com",
+      url: "",
     },
   });
 
   const onSubmit = (data: z.infer<typeof FormSchema>) => {
+    // Clear previous prediction when a new one starts
+    setPrediction(null);
     startTransition(async () => {
       try {
         const result = await getPrediction(data.url);
@@ -50,11 +52,6 @@ export default function InteractiveDemo() {
       }
     });
   };
-
-  useEffect(() => {
-    // Initial prediction on load
-    onSubmit({ url: "www.turnoverai.com" });
-  }, []);
 
   return (
     <section id="demo" className="scroll-mt-20">
