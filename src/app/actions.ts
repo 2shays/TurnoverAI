@@ -40,6 +40,9 @@ export async function getPrediction(
   manualEmployees?: number,
   manualIndustry?: string,
 ): Promise<PredictionResult> {
+  if (!url) {
+    throw new Error("URL is required to get a prediction.");
+  }
   try {
     let inferredIndustryName = manualIndustry;
     if (!inferredIndustryName) {
