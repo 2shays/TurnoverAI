@@ -116,7 +116,7 @@ export default function InteractiveDemo() {
               <div className="flex flex-col items-center gap-4 mt-4">
                 <div>
                   <p className="text-muted-foreground">Predicted Annual Turnover</p>
-                  {isPending ? <Skeleton className="h-10 w-40 mt-1" /> : <p className="text-4xl font-bold text-primary">{prediction ? formatNumber(prediction.predictedTurnover) : "$--"}</p>}
+                  {isPending ? <Skeleton className="h-10 w-40 mt-1" /> : <p className="text-4xl font-bold text-primary">{prediction ? formatNumber(prediction.predictedTurnover) : "₹--"}</p>}
                 </div>
                 <div className="w-full max-w-sm">
                   <div className="flex justify-between items-center mb-1">
