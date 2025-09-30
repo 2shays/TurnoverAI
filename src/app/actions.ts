@@ -16,25 +16,6 @@ const PredictionResultSchema = z.object({
 
 export type PredictionResult = z.infer<typeof PredictionResultSchema>;
 
-export type Industry = {
-  value: string;
-  label: string;
-}
-
-export async function getIndustries(): Promise<Industry[]> {
-    const { data, error } = await supabase
-      .from('industries')
-      .select('name');
-
-    if (error) {
-        console.error("Supabase error fetching industries:", error);
-        return [];
-    }
-
-    return data.map(item => ({ value: item.name, label: item.name }));
-}
-
-
 export async function getPrediction(
   url: string,
   manualEmployees?: number,

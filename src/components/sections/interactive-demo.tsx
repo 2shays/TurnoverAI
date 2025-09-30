@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition, useEffect } from "react";
+import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -22,7 +22,8 @@ import {
   CommandList,
 } from "@/components/ui/command"
 import { useToast } from "@/hooks/use-toast";
-import { getPrediction, getIndustries, type PredictionResult, type Industry } from "@/app/actions";
+import { getPrediction, type PredictionResult } from "@/app/actions";
+import { industries, type Industry } from "@/lib/industries";
 import { cn, formatNumber, formatLargeNumber } from "@/lib/utils";
 
 const FormSchema = z.object({
@@ -36,16 +37,7 @@ export default function InteractiveDemo() {
   const [isPending, startTransition] = useTransition();
   const { toast } = useToast();
   const [prediction, setPrediction] = useState<PredictionResult | null>(null);
-  const [industries, setIndustries] = useState<Industry[]>([]);
   const [comboboxOpen, setComboboxOpen] = useState(false);
-
-  useEffect(() => {
-    const fetchIndustries = async () => {
-        const industryData = await getIndustries();
-        setIndustries(industryData);
-    };
-    fetchIndustries();
-  }, [])
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),

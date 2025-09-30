@@ -1,0 +1,63 @@
+export type Industry = {
+  value: string;
+  label: string;
+};
+
+const industryNames = [
+  "Aerospace and Defense",
+  "Air Freight Transportation and Logistics",
+  "Air Transportation - Airlines",
+  "Air Transportation - Airport Services",
+  "Automobiles and Components",
+  "Banks, Diverse Financials, Insurance",
+  "Building Products",
+  "Chemicals",
+  "Construction Materials",
+  "Construction and Engineering",
+  "Consumer Durables, Household and Personal Products",
+  "Containers and Packaging",
+  "Education Services",
+  "Electric Utilities and Independent Power Producers and Energy Traders (including Fossil, Alternative and Nuclear Energy)",
+  "Electrical Equipment and Machinery",
+  "Food Production - Agricultural Production",
+  "Food Production - Animal Source Food Production",
+  "Food and Beverage Processing",
+  "Food and Staples Retailing",
+  "Forest and Paper Products - Forestry, Timber, Pulp and Paper, Rubber",
+  "Gas Utilities",
+  "Ground Transportation - Highways and Railtracks",
+  "Ground Transportation - Railroads Transportation",
+  "Ground Transportation - Trucking Transportation",
+  "Healthcare Equipment and Supplies",
+  "Healthcare Providers and Services, and Healthcare Technology",
+  "Homebuilding",
+  "Hotels, Restaurants and Leisure, and Tourism Services",
+  "Media",
+  "Mining - Coal",
+  "Mining - Iron, Aluminum, Other Metals",
+  "Mining - Other (Rare Minerals, Precious Metals and Gems)",
+  "Pharmaceuticals, Biotechnology and Life Sciences",
+  "Professional Services",
+  "Public Agencies",
+  "Real Estate",
+  "Retailing",
+  "Semiconductors and Semiconductors Equipment",
+  "Software and Services",
+  "Solid Waste Management Utilities",
+  "Specialized Consumer Services",
+  "Specialized Financial Services, Consumer Finance, Insurance Brokerage Firms",
+  "Technology Hardware and Equipment",
+  "Telecommunication Services",
+  "Textiles, Apparel, Footwear and Luxury Goods",
+  "Tires",
+  "Tobacco",
+  "Trading Companies and Distributors, and Commercial Services and Supplies",
+  "Water Transportation - Ports and Services",
+  "Water Transportation - Water Transportation",
+  "Water Utilities"
+];
+
+export const industries: Industry[] = industryNames.map(name => ({
+    value: name,
+    label: name,
+}));
