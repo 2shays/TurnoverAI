@@ -8,7 +8,7 @@ import { Check, ChevronsUpDown } from "lucide-react"
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -127,65 +127,72 @@ export default function InteractiveDemo() {
                       )}
                     />
                     <FormField
-                    control={form.control}
-                    name="industry"
-                    render={({ field }) => (
+                      control={form.control}
+                      name="industry"
+                      render={({ field }) => (
                         <FormItem className="flex flex-col">
-                        <FormLabel>Industry</FormLabel>
-                        <Popover open={comboboxOpen} onOpenChange={setComboboxOpen}>
+                          <FormLabel>Industry</FormLabel>
+                          <Popover open={comboboxOpen} onOpenChange={setComboboxOpen}>
                             <PopoverTrigger asChild>
-                            <FormControl>
+                              <FormControl>
                                 <Button
-                                variant="outline"
-                                role="combobox"
-                                className={cn(
+                                  variant="outline"
+                                  role="combobox"
+                                  className={cn(
                                     "w-full justify-between",
                                     !field.value && "text-muted-foreground"
-                                )}
+                                  )}
                                 >
-                                {field.value
+                                  {field.value
                                     ? industries.find(
                                         (industry) => industry.value === field.value
-                                    )?.label
-                                    : "Select industry"}
-                                <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                                      )?.label ?? field.value
+                                    : "Select or type an industry"}
+                                  <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
-                            </FormControl>
+                              </FormControl>
                             </PopoverTrigger>
                             <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
-                                <Command>
-                                    <CommandInput placeholder="Search industry..." />
-                                    <CommandList>
-                                        <CommandEmpty>No industry found.</CommandEmpty>
-                                        <CommandGroup>
-                                            {industries.map((industry) => (
-                                            <CommandItem
-                                                value={industry.label}
-                                                key={industry.value}
-                                                onSelect={() => {
-                                                    form.setValue("industry", industry.value)
-                                                    setComboboxOpen(false);
-                                                }}
-                                            >
-                                                <Check
-                                                className={cn(
-                                                    "mr-2 h-4 w-4",
-                                                    industry.value === field.value
-                                                    ? "opacity-100"
-                                                    : "opacity-0"
-                                                )}
-                                                />
-                                                {industry.label}
-                                            </CommandItem>
-                                            ))}
-                                        </CommandGroup>
-                                    </CommandList>
-                                </Command>
+                              <Command>
+                                <CommandInput
+                                  placeholder="Search or type industry..."
+                                  value={field.value}
+                                  onValueChange={field.onChange}
+                                />
+                                <CommandList>
+                                  <CommandEmpty>No industry found.</CommandEmpty>
+                                  <CommandGroup>
+                                    {industries.map((industry) => (
+                                      <CommandItem
+                                        value={industry.label}
+                                        key={industry.value}
+                                        onSelect={(currentValue) => {
+                                          form.setValue("industry", industries.find(i => i.label.toLowerCase() === currentValue.toLowerCase())?.value ?? currentValue)
+                                          setComboboxOpen(false);
+                                        }}
+                                      >
+                                        <Check
+                                          className={cn(
+                                            "mr-2 h-4 w-4",
+                                            industry.value === field.value
+                                              ? "opacity-100"
+                                              : "opacity-0"
+                                          )}
+                                        />
+                                        {industry.label}
+                                      </CommandItem>
+                                    ))}
+                                  </CommandGroup>
+                                </CommandList>
+                              </Command>
                             </PopoverContent>
-                        </Popover>
-                        <FormMessage />
+                          </Popover>
+                          <FormDescription>
+                            You can type a custom industry if it's not in the list.
+                          </FormDescription>
+                          <FormMessage />
                         </FormItem>
-                    )}
+                      )}
                     />
                 </div>
                 
