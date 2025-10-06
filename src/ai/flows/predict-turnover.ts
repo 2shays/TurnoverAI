@@ -56,7 +56,7 @@ const prompt = ai.definePrompt({
 
   5.  **Reasoning:** Clearly explain the steps you took. State the average revenue per employee benchmark you used and cite the source if possible. Explain how you adjusted the baseline prediction based on the website context.
 
-  Ensure the output is valid JSON.
+  Ensure the output is valid JSON matching the PredictTurnoverOutputSchema schema.
   `,
 });
 
