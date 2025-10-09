@@ -28,17 +28,21 @@ const prompt = ai.definePrompt({
   name: 'inferIndustryFromUrlPrompt',
   input: {schema: InferIndustryFromUrlInputSchema},
   output: {schema: InferIndustryFromUrlOutputSchema},
-  prompt: `You are an expert business analyst. Your task is to determine the industry of a company by analyzing its website and external information.
+  prompt: `You are an expert business analyst. Your task is to determine the most accurate industry for a company by analyzing its website.
 
-  First, do a thorough analysis of the website content at the following URL: {{{url}}}
-  - Analyze the main landing page content, including headings and key sections.
-  - Review the "About Us", "Services", and "Products" pages if they exist. Specifically see the "About Us" page as this normally has information about the companies industry.
-  - Look for keywords, product descriptions, and mission statements.
+  **Process:**
 
-  Next, perform a web search to gather external context about the company. Look for its classification in business directories, news articles, or its own description on social media profiles.
+  1.  **Prioritize Website's Own Description (CRITICAL):**
+      - First, conduct a thorough analysis of the website content at the following URL: {{{url}}}
+      - **Your primary goal is to find how the company describes itself.** Look at the main landing page, the "About Us" page, and page footers.
+      - Trust the company's own words. For example, if it says "manufacturer and exporter of Basic Chemicals, Dyes and Intermediates," the industry is "Chemicals" or "Chemical Manufacturing", not "Pharmaceuticals".
 
-  Based on your combined analysis of the website's content and the external web search, infer the most specific and accurate industry for the company.
-  
+  2.  **External Corroboration (If Needed):**
+      - **Only if the website is unclear or ambiguous**, perform a web search to gather external context. Look for its classification in business directories (like LinkedIn), news articles, or its own description on social media profiles.
+
+  3.  **Synthesize and Conclude:**
+      - Based on your analysis, with the highest priority given to the company's self-description on its own website, infer the most specific and accurate industry.
+
   URL: {{{url}}}
   Industry:`,
 });

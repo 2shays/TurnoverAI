@@ -35,24 +35,29 @@ const estimateEmployeeCountPrompt = ai.definePrompt({
   name: 'estimateEmployeeCountPrompt',
   input: {schema: EstimateEmployeeCountFromWebsiteInputSchema},
   output: {schema: EstimateEmployeeCountFromWebsiteOutputSchema},
-  prompt: `You are an expert business analyst specializing in estimating company size based on public web data.
+  prompt: `You are an expert business analyst specializing in extracting key data from company websites.
 
-  Your task is to provide a realistic estimate of a company's employee count.
+  **Your primary task is to find the employee count for the company at the URL: {{{websiteUrl}}}**
 
-  First, perform a thorough analysis of the website at the provided URL: {{{websiteUrl}}}.
-  
-  Then, perform a web search to find external information about the company to corroborate your findings. Look for company profiles, news articles, or business directory listings that mention employee numbers.
+  **Process:**
 
-  Consider factors like:
-  - **Team & Careers:** Check for "About Us", "Team", or "Careers" pages on the primary website. The number of open positions or listed team members is a strong signal. The About section may have mentioned the companies employee numbers in the description either as a number, range or approximation.
-  - **External Profiles:** Use your web search to find the company's employee number from other third party sites.
-  - **Products & Services:** A large and complex portfolio of products or services suggests a larger team.
-  - **Locations:** Mentions of multiple offices or international locations indicate a larger workforce.
-  - **Client & Partner Logos:** A long list of well-known clients can suggest a company with significant operational capacity.
+  1.  **Prioritize Direct Information (CRITICAL):**
+      - First, thoroughly analyze the content of the primary website at {{{websiteUrl}}}.
+      - **Your first priority is to find an explicit mention of employee count**. Scour the "About Us", "Our Team", "Company", "Who We Are", or "Careers" pages. Look for phrases like "members of our workforce", "number of employees", "team of X people", etc.
+      - **If you find a specific number (e.g., "250 employees", "more than 250 members"), use that number directly as the \`employeeCount\`. This is the most reliable source.**
 
-  Your final estimate should firstly use any information you've found directly on the company website. If there is no direct information on the company website, based on a combination of these factors, provide a single, most likely estimated employee count. 
+  2.  **External Corroboration & Fallback:**
+      - **Only if you cannot find any mention of employee count on the primary website**, perform a web search to find external information. Look for the company's LinkedIn profile, news articles, or business directory listings that mention employee numbers.
+      - If you find a number from a reliable external source, use that.
 
-  Ensure the output is valid JSON matching the EstimateEmployeeCountFromWebsiteOutputSchema schema.
+  3.  **Estimation (Last Resort):**
+      - **If and only if both direct analysis and external search yield no numbers**, then you may estimate. Base your estimation on factors like the number of open positions on a "Careers" page, the size of a listed leadership team, the number of office locations, or the scale of products/services.
+
+  4.  **Reasoning:**
+      - Clearly state where you found the number (e.g., "Found '250 members of workforce' on the About Us page.").
+      - If you had to estimate, explain the factors you used.
+
+  Ensure your output is valid JSON matching the EstimateEmployeeCountFromWebsiteOutputSchema.
   `,
 });
 

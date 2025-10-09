@@ -21,7 +21,7 @@ export type PredictTurnoverInput = z.infer<typeof PredictTurnoverInputSchema>;
 const PredictTurnoverOutputSchema = z.object({
   predictedTurnover: z.number().describe('The predicted annual turnover in INR.'),
   confidenceScore: z.number().describe('A confidence score for the prediction, from 0 to 100.'),
-  reasoning: z.string().describe('The detailed reasoning behind the turnover prediction, referencing any third-party data found and the benchmarks used.'),
+  reasoning: z.string().describe('A brief, summarized reasoning behind the turnover prediction, including key numbers and the final calculation.'),
 });
 export type PredictTurnoverOutput = z.infer<typeof PredictTurnoverOutputSchema>;
 
@@ -56,26 +56,23 @@ const prompt = ai.definePrompt({
 
   **Your Process (in order of priority):**
 
-  1.  **Prioritize Direct Financial Data:** First and foremost, perform a targeted web search for the company's reported turnover or revenue. Use queries like "[Company Name] turnover", "[Company Name] revenue", and check financial data providers like **Tracxn, Tofler, CRISIL, ICRA, CARE, Acuite and other public business directories**.
-  
-  2.  **Internal & External Benchmark Analysis:** Use the \`getBenchmarkData\` tool to retrieve the internal reference database of public companies.
-      a.  **Internal Data First:** Compare the target company to similar companies within the same industry ({{{industry}}}) from the internal reference database you just fetched.
-      b.  **External Web Search:** Supplement your internal data by performing a web search to find reliable financial benchmarks for the specified industry ({{{industry}}}). Focus on finding the average "revenue per employee" and "growth rate" for companies in this sector in India.
+  1.  **Prioritize Direct Financial Data:** First and foremost, perform a targeted web search for the company's reported turnover or revenue. Use queries like "[Company Name] turnover", "[Company Name] revenue", and check financial data providers like **Tracxn, Tofler, CRISIL, ICRA, CARE, Acuite and other public business directories**. If you find a figure, prioritize it.
+
+  2.  **Internal & External Benchmark Analysis:**
+      a.  **Internal Data First:** Use the \`getBenchmarkData\` tool to retrieve the internal reference database of public companies. Compare the target company to similar companies within the same industry ({{{industry}}}).
+      b.  **External Web Search:** Supplement your internal data by performing a web search to find reliable financial benchmarks for the specified industry ({{{industry}}}). Focus on finding the average "revenue per employee" for companies in this sector in India.
 
   3.  **Turnover Calculation:**
-      - **If you found direct data from Step 1:** Use this as a baseline and if you found multiple data points combine them into one single baseline but prioritise the most recent data point. Check the year of the data you found (if it's combined use the most recent date), adjust the baseline turnover based on the industry growth rate found in (2b) to **estimate the baseline for this year**.
+      - **If you found direct data from Step 1:** Use this as your baseline. Adjust the baseline turnover based on the industry growth rate and/or data from your benchmarks to estimate the turnover for this year.
       - **If you did NOT find direct data:** Calculate a baseline prediction by multiplying the employee count ({{{employees}}}) by the average revenue per employee you found in Step 2.
-      - **Adjust the benchmark:** Use the information gathered from the internal database (2a) and the external search for "revenue per employee" (2b). Using this information adjust the benchmark to come up with the \`predictedTurnover\`.
+      - **Adjust the benchmark:** Use the information gathered from the internal database (2a) and the external search for "revenue per employee" (2b) to refine your baseline and come up with the final \`predictedTurnover\`.
 
-  4.  **Confidence Score:** Provide a confidence score between 0 and 100.
-      - **High Confidence (80-100):** You found recent, direct turnover data for the target company from reliable sources.
-      - **Medium Confidence (50-79):** You did not find a direct figure but found strong, consistent "revenue per employee" benchmarks from both your internal data and external web search for the specific industry.
-      - **Low Confidence (0-49):** You could not find specific turnover data or reliable industry benchmarks, and the prediction is based on broad estimates.
+  4.  **Confidence Score:** Provide a confidence score between 0 and 100 based on the quality of data you found. High confidence for direct turnover data, medium for strong benchmarks, low for pure estimation.
 
-  5.  **Reasoning:** This is critical. **Clearly explain your process.**
-      - State what data you found from external sources like Tracxn or Tofler.
-      - State what data you used from the internal database via the getBenchmarkData tool.
-      - Explain how you arrived at the final \`predictedTurnover\` number, ensuring the final value is in INR.
+  5.  **Reasoning (SUMMARIZE THIS SECTION):** This is critical. Provide a **brief and concise** explanation of your process.
+      - **Summarize your findings:** State key numbers found (e.g., "Found turnover of ₹130 Cr on Tracxn for FY22").
+      - **Show your work:** Briefly explain the calculation. For example: "Based on a revenue per employee of ₹50L in the {{{industry}}} sector, the calculation is 250 employees * ₹50L/employee = ₹125 Cr."
+      - Keep the entire reasoning to a few short, clear sentences.
 
   Ensure the output is valid JSON matching the PredictTurnoverOutputSchema schema, with \`predictedTurnover\` as a number in INR.
   `,
