@@ -3,7 +3,8 @@
 import { z } from "zod";
 import { inferIndustryFromUrl } from "@/ai/flows/infer-industry-from-url";
 import { estimateEmployeeCountFromWebsite } from "@/ai/flows/estimate-employee-count-from-website";
-import { predictTurnover } from "@/ai/flows/predict-turnover";
+import { predictTurnover, getBenchmarkDataTool } from "@/ai/flows/predict-turnover";
+import { supabase } from "@/lib/supabaseClient";
 
 
 const PredictionResultSchema = z.object({
@@ -59,4 +60,13 @@ export async function getPrediction(
     }
     throw new Error("Failed to generate prediction. Please try another URL.");
   }
+}
+
+export async function getBenchmarkData() {
+  const { data, error } = await supabase.from('turnover').select('*');
+  if (error) {
+    console.error('Error fetching benchmark data:', error);
+    return { error: error.message };
+  }
+  return data;
 }
