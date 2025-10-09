@@ -1,4 +1,3 @@
-// This file is machine-generated - edit at your own risk.
 'use server';
 /**
  * @fileOverview Infers the industry of a company from its website URL.
@@ -36,7 +35,7 @@ const prompt = ai.definePrompt({
   - Review the "About Us", "Services", and "Products" pages if they exist.
   - Look for keywords, product descriptions, and mission statements.
 
-  Next, perform a web search to gather external context about the company. Look for its classification in business directories, news articles, or its own description on social media profiles.
+  Next, perform a web search to gather external context about the company. Look for its classification in business directories (like LinkedIn), news articles, or its own description on social media profiles.
 
   Based on your combined analysis of the website's content and the external web search, infer the most specific and accurate industry for the company.
   
