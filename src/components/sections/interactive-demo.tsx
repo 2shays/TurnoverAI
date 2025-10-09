@@ -27,7 +27,7 @@ import { industries, type Industry } from "@/lib/industries";
 import { cn, formatNumber, formatLargeNumber } from "@/lib/utils";
 
 const FormSchema = z.object({
-  url: z.string().optional(),
+  url: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
   employees: z.coerce.number().optional(),
   industry: z.string().optional(),
 });
@@ -93,7 +93,7 @@ export default function InteractiveDemo() {
                     <FormItem>
                       <FormLabel>Company Website URL</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., www.example.com" {...field} />
+                        <Input placeholder="e.g., https://www.example.com" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -157,7 +157,9 @@ export default function InteractiveDemo() {
                                 <CommandInput
                                   placeholder="Search or type industry..."
                                   value={field.value}
-                                  onValueChange={field.onChange}
+                                  onValueChange={(value) => {
+                                    form.setValue("industry", value)
+                                  }}
                                 />
                                 <CommandList>
                                   <CommandEmpty>No industry found.</CommandEmpty>
