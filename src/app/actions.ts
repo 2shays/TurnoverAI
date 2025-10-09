@@ -11,6 +11,7 @@ const PredictionResultSchema = z.object({
   confidence: z.number(),
   inferredIndustry: z.string(),
   inferredEmployees: z.number(),
+  reasoning: z.string(),
   url: z.string(),
 });
 
@@ -48,6 +49,7 @@ export async function getPrediction(
       confidence: turnoverPrediction.confidenceScore,
       inferredIndustry: inferredIndustryName!,
       inferredEmployees,
+      reasoning: turnoverPrediction.reasoning,
       url,
     };
   } catch (error) {

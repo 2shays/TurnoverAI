@@ -44,11 +44,11 @@ const prompt = ai.definePrompt({
   1.  **Prioritize Direct Financial Data:** First and foremost, perform a targeted web search for the company's reported turnover or revenue. Use queries like "[Company Name] turnover", "[Company Name] revenue", and check financial data providers like **Tracxn, Tofler, and other public business directories**. If you find a credible, recent turnover figure in INR, this should be the primary basis of your prediction.
 
   2.  **Internal & External Benchmark Analysis:** If and only if you cannot find a direct turnover figure, you will use benchmark analysis.
-      a.  **Internal Data First:** Compare the target company to similar companies within the same industry ({{{industry}}}) from your internal reference database. Use their turnover and employee counts to establish a strong baseline.
+      a.  **Internal Data First:** Compare the target company to similar companies within the same industry ({{{industry}}}) from your internal reference database. Determine if the target company is larger or smaller than the internal reference data that you have selected, use employee count and compare the website and offerings to determine this. Use this as a baseline to work on.
       b.  **External Web Search:** Supplement your internal data by performing a web search to find reliable financial benchmarks for the specified industry ({{{industry}}}). Focus on finding the average "revenue per employee" for companies in this sector in India.
 
   3.  **Turnover Calculation:**
-      - **If you found direct data in Step 1:** Use that number as your primary \`predictedTurnover\`. You may then slightly adjust it based on the company's website context (e.g., if it looks like a premium vs. a low-cost player).
+      - **If you found direct data in Step 1:** Use that number as your primary \`predictedTurnover\`.
       - **If you did NOT find direct data:** Calculate a baseline prediction by synthesizing the data from your internal database (2a) and the external "revenue per employee" benchmarks (2b). The employee count ({{{employees}}}) will be a key multiplier here.
 
   4.  **Confidence Score:** Provide a confidence score between 0 and 100.

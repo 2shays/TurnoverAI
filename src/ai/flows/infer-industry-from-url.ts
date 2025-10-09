@@ -32,10 +32,10 @@ const prompt = ai.definePrompt({
 
   First, do a thorough analysis of the website content at the following URL: {{{url}}}
   - Analyze the main landing page content, including headings and key sections.
-  - Review the "About Us", "Services", and "Products" pages if they exist.
+  - Review the "About Us", "Services", and "Products" pages if they exist. Specifically see the "About Us" page as this normally has information about the companies industry.
   - Look for keywords, product descriptions, and mission statements.
 
-  Next, perform a web search to gather external context about the company. Look for its classification in business directories (like LinkedIn), news articles, or its own description on social media profiles.
+  Next, perform a web search to gather external context about the company. Look for its classification in business directories, news articles, or its own description on social media profiles.
 
   Based on your combined analysis of the website's content and the external web search, infer the most specific and accurate industry for the company.
   

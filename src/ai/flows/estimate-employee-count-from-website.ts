@@ -41,17 +41,16 @@ const estimateEmployeeCountPrompt = ai.definePrompt({
 
   First, perform a thorough analysis of the website at the provided URL: {{{websiteUrl}}}.
   
-  Then, perform a web search to find external information about the company to corroborate your findings. Look for LinkedIn company profiles, news articles, or business directory listings that mention employee numbers.
+  Then, perform a web search to find external information about the company to corroborate your findings. Look for company profiles, news articles, or business directory listings that mention employee numbers.
 
-  Your final reasoning should synthesize information from both the company's website and the external sources you find. Consider factors like:
-  - **Team & Careers:** Check for "About Us", "Team", or "Careers" pages on the primary website. The number of open positions or listed team members is a strong signal.
-  - **External Profiles:** Use your web search to find the company's LinkedIn page and note the employee count listed there. This is a very strong indicator.
+  Consider factors like:
+  - **Team & Careers:** Check for "About Us", "Team", or "Careers" pages on the primary website. The number of open positions or listed team members is a strong signal. The About section may have mentioned the companies employee numbers in the description either as a number, range or approximation.
+  - **External Profiles:** Use your web search to find the company's employee number from other third party sites.
   - **Products & Services:** A large and complex portfolio of products or services suggests a larger team.
   - **Locations:** Mentions of multiple offices or international locations indicate a larger workforce.
-  - **Website Quality & Complexity:** A simple website might indicate a smaller team, but this can be misleading. Always cross-reference with external search results.
   - **Client & Partner Logos:** A long list of well-known clients can suggest a company with significant operational capacity.
 
-  Based on a combination of these factors, provide a single, most likely estimated employee count. Provide detailed reasoning for your estimate, referencing specific observations from the website and the external sources you discovered in your web search. Avoid single-digit estimates unless all sources strongly indicate a solo venture.
+  Your final estimate should firstly use any information you've found directly on the company website. If there is no direct information on the company website, based on a combination of these factors, provide a single, most likely estimated employee count. 
 
   Ensure the output is valid JSON matching the EstimateEmployeeCountFromWebsiteOutputSchema schema.
   `,

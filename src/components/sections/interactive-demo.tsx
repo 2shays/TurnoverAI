@@ -220,7 +220,7 @@ export default function InteractiveDemo() {
                   {isPending ? <Skeleton className="h-2.5 w-full mt-2" /> : <Progress value={prediction?.confidence || 0} className="h-2.5" indicatorClassName="bg-accent" />}
                 </div>
               </div>
-               <Card className="mt-6 bg-secondary/50">
+               <Card className="mt-6 bg-secondary/50 text-left">
                 <CardContent className="p-4 space-y-2">
                     <p className="font-medium text-foreground">Inferred Data:</p>
                     {isPending ? (
@@ -238,6 +238,25 @@ export default function InteractiveDemo() {
                     )}
                 </CardContent>
             </Card>
+            {isPending ? (
+              <Card className="mt-4 w-full bg-secondary/50 text-left">
+                <CardContent className="p-4 space-y-2">
+                  <p className="font-medium text-foreground">Reasoning:</p>
+                   <div className="space-y-2 pt-1">
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-2/5" />
+                    </div>
+                </CardContent>
+              </Card>
+            ) : prediction?.reasoning && (
+              <Card className="mt-4 w-full bg-secondary/50 text-left">
+                <CardContent className="p-4 space-y-2">
+                  <p className="font-medium text-foreground">Reasoning:</p>
+                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{prediction.reasoning}</p>
+                </CardContent>
+              </Card>
+            )}
             </div>
           </div>
         </div>
