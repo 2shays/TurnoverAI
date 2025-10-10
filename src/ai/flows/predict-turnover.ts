@@ -25,18 +25,6 @@ const PredictTurnoverOutputSchema = z.object({
 });
 export type PredictTurnoverOutput = z.infer<typeof PredictTurnoverOutputSchema>;
 
-export const getBenchmarkDataTool = ai.defineTool(
-    {
-      name: 'getBenchmarkData',
-      description: 'Retrieves internal benchmark data for public companies from the database, including turnover, employee count, and industry.',
-      inputSchema: z.object({}),
-      outputSchema: z.any(),
-    },
-    async () => {
-        return await getBenchmarkData();
-    }
-);
-
 
 export async function predictTurnover(input: PredictTurnoverInput): Promise<PredictTurnoverOutput> {
   return predictTurnoverFlow(input);
@@ -46,7 +34,6 @@ const prompt = ai.definePrompt({
   name: 'predictTurnoverPrompt',
   input: {schema: PredictTurnoverInputSchema},
   output: {schema: PredictTurnoverOutputSchema},
-  tools: [getBenchmarkDataTool],
   prompt: `You are an expert financial analyst specializing in private company valuation. Your task is to predict the annual turnover (in INR) for a given company as of this year.
 
   **Company Information:**
@@ -56,11 +43,11 @@ const prompt = ai.definePrompt({
 
   **Your Process (in order of priority):**
 
-  1.  **Prioritize Direct Financial Data:** First and foremost, perform a targeted web search for the company's reported turnover or revenue. Use queries like "[Company Name] turnover", "[Company Name] revenue", and check financial data providers like **Tracxn, Tofler, CRISIL, ICRA, CARE, Acuite and other public business directories**. If you find a figure, prioritize it.
+  1.  **Prioritize Direct Financial Data:** First and foremost, perform a targeted web search for the company's reported turnover or revenue. Use queries like "[Company Name] turnover", "[Company Name] revenue", and check financial data providers like **Tracxn, Tofler, CRISIL, ICRA, CARE, Acuite, *VCCEdge, and other official business registries/filings* (e.g., MCA India filings)**. If you find a figure, prioritize it.
 
   2.  **Internal & External Benchmark Analysis:**
-      a.  **Internal Data First:** Use the \`getBenchmarkData\` tool to retrieve the internal reference database of public companies. Compare the target company to similar companies within the same industry ({{{industry}}}).
-      b.  **External Web Search:** Supplement your internal data by performing a web search to find reliable financial benchmarks for the specified industry ({{{industry}}}). Focus on finding the average "revenue per employee" for companies in this sector in India.
+      a.  **Internal Data First:** Use the provided internal reference database of public companies. Compare the target company to similar companies within the same industry ({{{industry}}}).
+      b.  **External Web Search:** Supplement your internal data by performing a web search to find reliable financial benchmarks for the specified industry ({{{industry}}}). Focus on finding the average "revenue per employee" for companies in this sector in India. ***Also search for the company's official industry classification (e.g., "Company Name NIC code" or "Company Name NAICS code") to refine the benchmark search.***
 
   3.  **Turnover Calculation:**
       - **If you found direct data from Step 1:** Use this as your baseline. Adjust the baseline turnover based on the industry growth rate and/or data from your benchmarks to estimate the turnover for this year.

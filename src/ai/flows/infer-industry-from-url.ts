@@ -28,23 +28,25 @@ const prompt = ai.definePrompt({
   name: 'inferIndustryFromUrlPrompt',
   input: {schema: InferIndustryFromUrlInputSchema},
   output: {schema: InferIndustryFromUrlOutputSchema},
-  prompt: `You are an expert business analyst. Your task is to determine the most accurate industry for a company by analyzing its website.
+  prompt: `You are an expert business analyst. Your task is to determine the most accurate and *standardized* industry for a company by analyzing its website and external classifications.
 
-  **Process:**
+  **Process:**
 
-  1.  **Prioritize Website's Own Description (CRITICAL):**
-      - First, conduct a thorough analysis of the website content at the following URL: {{{url}}}
-      - **Your primary goal is to find how the company describes itself.** Look at the main landing page, the "About Us" page, and page footers.
-      - Trust the company's own words. For example, if it says "manufacturer and exporter of Basic Chemicals, Dyes and Intermediates," the industry is "Chemicals" or "Chemical Manufacturing", not "Pharmaceuticals".
+  1.  **Identify Primary Product/Service (CRITICAL):**
+      - First, conduct a thorough analysis of the website content at the following URL: {{{url}}}
+      - **Your primary goal is to determine what the company *actually sells or does* to generate revenue.** Look at the main landing page, the "Products/Services" section, and client case studies.
+      - ***Focus on the core activity***: Is it selling software, manufacturing goods, providing consulting, or logistics? The industry should reflect this core revenue-generating activity.
 
-  2.  **External Corroboration (If Needed):**
-      - **Only if the website is unclear or ambiguous**, perform a web search to gather external context. Look for its classification in business directories (like LinkedIn), news articles, or its own description on social media profiles.
+  2.  **Prioritize Standardized External Classification:**
+      - **Perform a web search for the company's official industry code or classification.** Use queries like "[Company Name] NIC code", "[Company Name] NAICS", or "[Company Name] SIC code". Also check business directory classifications like LinkedIn, Tracxn, or business registry filings.
+      - **If an official or widely-accepted standardized classification (e.g., 'Software Publishing', 'Chemical Manufacturing') is found, use that as the basis for the \`Industry\` name.**
 
-  3.  **Synthesize and Conclude:**
-      - Based on your analysis, with the highest priority given to the company's self-description on its own website, infer the most specific and accurate industry.
+  3.  **Synthesize and Conclude:**
+      - **Only if an official classification is unavailable**, infer the most specific and accurate industry based on the primary product/service identified in Step 1.
+      - ***Avoid vague terms*** (e.g., "Technology"). Instead, use specific terms like "Enterprise Software Development," "FinTech," or "Logistics Services." *If a company self-describes as "Leading-edge Tech Solutions," but their core product is a mobile app for food delivery, the industry should be "Food Delivery/eCommerce" or "Software/App Development," not "Technology."*
 
-  URL: {{{url}}}
-  Industry:`,
+  URL: {{{url}}}
+  Industry:"`,
 });
 
 const inferIndustryFromUrlFlow = ai.defineFlow(
