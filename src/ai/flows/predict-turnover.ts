@@ -9,7 +9,6 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
-import { getBenchmarkData } from '@/app/actions';
 
 const PredictTurnoverInputSchema = z.object({
   url: z.string().describe('The URL of the company website.'),
@@ -34,34 +33,53 @@ const prompt = ai.definePrompt({
   name: 'predictTurnoverPrompt',
   input: {schema: PredictTurnoverInputSchema},
   output: {schema: PredictTurnoverOutputSchema},
-  prompt: `You are an expert financial analyst specializing in private company valuation. Your task is to predict the annual turnover (in INR) for a given company as of this year.
+  prompt: `You are an expert financial analyst specializing in private company valuation. Your task is to predict the annual turnover for a company, synthesizing information from all available data points.
 
-  **Company Information:**
-  - Website: {{{url}}}
-  - Industry: {{{industry}}}
-  - Employee Count: {{{employees}}}
+**Company Information:**
+- Website: {{{url}}}
+- Industry: {{{industry}}}
+- Employee Count: {{{employees}}}
 
-  **Your Process (in order of priority):**
+**Your Process:**
 
-  1.  **Prioritize Direct Financial Data:** First and foremost, perform a targeted web search for the company's reported turnover or revenue. Use queries like "[Company Name] turnover", "[Company Name] revenue", and check financial data providers like **Tracxn, Tofler, CRISIL, ICRA, CARE, Acuite, *VCCEdge, and other official business registries/filings* (e.g., MCA India filings)**. If you find a figure, prioritize it.
+1.  **Comprehensive Data Search (Highest Priority):**
+    - Perform a wide-ranging web search for the company's reported revenue or turnover. Use multiple queries targeting different years and sources, such as:
+        - "[Company Name] revenue FY24" (or most recent fiscal year)
+        - "[Company Name] turnover latest"
+        - "[Company Name] Tofler"
+        - "[Company Name] Tracxn"
+        - "[Company Name] annual report"
+        - Check for reports from rating agencies like CRISIL, ICRA, CARE, Acuite.
+    - **This is the most critical step. A directly reported number from a reliable source is the strongest signal.**
 
-  2.  **Internal & External Benchmark Analysis:**
-      a.  **Internal Data First:** Use the provided internal reference database of public companies. Compare the target company to similar companies within the same industry ({{{industry}}}).
-      b.  **External Web Search:** Supplement your internal data by performing a web search to find reliable financial benchmarks for the specified industry ({{{industry}}}). Focus on finding the average "revenue per employee" for companies in this sector in India. ***Also search for the company's official industry classification (e.g., "Company Name NIC code" or "Company Name NAICS code") to refine the benchmark search.***
+2.  **Internal Database and Industry Benchmarking:**
+    - Use your inherent knowledge and web search capabilities to find revenue-per-employee benchmarks for the specified industry: '{{{industry}}}'.
+    - Analyze financial data of comparable public companies within the same sector.
 
-  3.  **Turnover Calculation:**
-      - **If you found direct data from Step 1:** Use this as your baseline. Adjust the baseline turnover based on the industry growth rate and/or data from your benchmarks to estimate the turnover for this year.
-      - **If you did NOT find direct data:** Calculate a baseline prediction by multiplying the employee count ({{{employees}}}) by the average revenue per employee you found in Step 2.
-      - **Adjust the benchmark:** Use the information gathered from the internal database (2a) and the external search for "revenue per employee" (2b) to refine your baseline and come up with the final \`predictedTurnover\`.
+3.  **Prediction and Justification (CRITICAL):**
+    - **If a clear, recent turnover figure is available from Step 1:**
+        - **Use that figure as your primary predicted turnover.**
+        - State the source clearly in your reasoning (e.g., "Tracxn reports ₹130 Cr for FY24").
+    - **If ONLY older or conflicting data exists:**
+        - Explain the discrepancy.
+        - Formulate a well-reasoned estimate, prioritizing the most reliable data point and explaining why others were discarded.
+    - **If NO third-party turnover data is found:**
+        - Fall back to a benchmark-based calculation.
+        - Calculate the turnover by multiplying the employee count ({{{employees}}}) by a relevant revenue-per-employee figure for the industry.
 
-  4.  **Confidence Score:** Provide a confidence score between 0 and 100 based on the quality of data you found. High confidence for direct turnover data, medium for strong benchmarks, low for pure estimation.
+4.  **Confidence Score:**
+    - Provide a confidence score between 0 and 100.
+    - High confidence (>85) for a direct, recent number from a reputable source.
+    - Medium confidence (50-85) for older data or estimates based on strong benchmarks.
+    - Low confidence (<50) if the prediction is based on limited data.
 
-  5.  **Reasoning (SUMMARIZE THIS SECTION):** This is critical. Provide a **brief and concise** explanation of your process.
-      - **Summarize your findings:** State key numbers found (e.g., "Found turnover of ₹130 Cr on Tracxn for FY22").
-      - **Show your work:** Briefly explain the calculation. For example: "Based on a revenue per employee of ₹50L in the {{{industry}}} sector, the calculation is 250 employees * ₹50L/employee = ₹125 Cr."
-      - Keep the entire reasoning to a few short, clear sentences.
+5.  **Reasoning (Concise Summary):**
+    - Provide a **brief, summarized summary** of your findings and conclusion.
+    - **Clearly state the primary turnover figure you found and its source.**
+    - If no direct figure was found, show the simple calculation you used (e.g., "250 employees * ₹5L/employee = ₹12.5 Cr").
+    - Briefly explain your final conclusion.
 
-  Ensure the output is valid JSON matching the PredictTurnoverOutputSchema schema, with \`predictedTurnover\` as a number in INR.
+Ensure the output is valid JSON matching the \`PredictTurnoverOutputSchema\` schema, with \`predictedTurnover\` as a number in INR.
   `,
 });
 
