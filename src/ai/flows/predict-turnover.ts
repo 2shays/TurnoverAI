@@ -131,5 +131,3 @@ const predictTurnoverFlow = ai.defineFlow(
     return output!;
   }
 );
-
-    
