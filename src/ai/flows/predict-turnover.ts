@@ -10,10 +10,19 @@
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
+const IndustryBenchmarkSchema = z.object({
+  name: z.string(),
+  avg_employees: z.number(),
+  avg_web_traffic: z.number(),
+  revenue_per_employee: z.number(),
+  base_revenue: z.number(),
+});
+
 const PredictTurnoverInputSchema = z.object({
   url: z.string().describe('The URL of the company website.'),
   industry: z.string().optional().describe('An optional, user-provided industry to override AI inference.'),
   employees: z.number().optional().describe('An optional, user-provided employee count to override AI inference.'),
+  benchmarkData: z.array(IndustryBenchmarkSchema).optional().describe('Optional curated benchmark data from the database.'),
 });
 export type PredictTurnoverInput = z.infer<typeof PredictTurnoverInputSchema>;
 
@@ -51,6 +60,9 @@ Provided Industry: {{{industry}}} (Use this industry and skip identification. Se
 {{#if employees}}
 Provided Employee Count: {{{employees}}} (Use this for Variable B. Set inferredEmployees to this value.)
 {{/if}}
+{{#if benchmarkData}}
+Reference Database: You have been provided with the following curated benchmark data. Use this as a strong reference point for sourcing constants like Revenue Per Employee and for normalizing your findings for scale, but you must still perform web research to find the most specific and up-to-date information for the target company.
+{{/if}}
 
 Target Prediction Period: Current Fiscal Year (FY25, assume year ending March 31 of the current calendar year).
 
@@ -59,7 +71,7 @@ Core Constraint: DO NOT use or hallucinate any data point for which reliable inf
 Phase 1: Dynamic Profiling and Sourcing
 Identify Industry: {{#if industry}}Use the provided industry: '{{{industry}}}' and set inferredIndustry.{{else}}Analyze the website at {{{url}}} to determine the company's primary industry and sub-sector. Prioritize the company's own description on its "About Us" or "Products" page. Set the result to the 'inferredIndustry' output field.{{/if}}
 
-Source Constants: Based **only** on the identified industry, perform web searches to find the following five required constants for FY25. You MUST find these. Search for terms like "average revenue per employee for [industry] in India".
+Source Constants: Based **only** on the identified industry, perform web searches to find the following five required constants for FY25. You MUST find these. Search for terms like "average revenue per employee for [industry] in India". Use the provided Benchmark Data as a primary reference if available for the identified industry.
 - Industry Annual Growth Rate (Percentage used to project Ra).
 - Revenue Per Employee (RPE) (for Rb benchmark, in INR/employee).
 - Average Revenue Per Product Line (for Rc benchmark, in INR).
@@ -71,7 +83,7 @@ You must perform dedicated web searches to find a verifiable data point for all 
 **CRITICAL RESEARCH DIRECTIVE**: Prioritize data from Indian financial data platforms like **Tracxn, Tofler, InstaFinancials, and Zauba Corp**. Also search Indian credit rating agency reports from **CRISIL, ICRA, CARE, and ACUITE**. Always use the **most recently reported** fiscal year data (e.g., prefer FY24 data over FY22).
 
 Variable Data to Find (Initial Weight)
-A. Most Recently Reported Revenue (Ra) (50%): Find the **most recently reported** Annual Turnover (Revenue) and its corresponding Fiscal Year.
+A. Most Recently Reported Revenue (Ra) (50%): Find the **most recently reported** Annual Turnover (Revenue) and its corresponding Fiscal Year. Use the provided benchmarkData as a reference.
 B. Employee Benchmark (Rb) (20%): {{#if employees}}Use the provided count of {{{employees}}} and set inferredEmployees.{{else}}First, thoroughly analyze the company website (About Us, Our Team pages) for an employee count. If not found, perform targeted web searches using the same platforms listed above. If you find a range, take the average. Set the result to the 'inferredEmployees' output field. Do not infer 0 unless the company is explicitly a one-person entity.{{/if}}
 C. Product Lines (Rc) (20%): Analyze the company's website ({{{url}}}) to count the number of distinct major Product Lines or service Categories.
 D. Locations (Rd) (10%): Search for the company's "locations", "offices", or "manufacturing plants" to count key domestic/primary operational locations.
@@ -88,30 +100,25 @@ Phase 3: Calculation and Weight Adjustment
   - Predicted Turnover = ∑{for each Found Variable i} (Ri × Adjusted Weight_i)
 
 Phase 4: Structured Output
-- For the 'reasoning' field, provide the final calculation steps in a structured format as shown in the example.
-- For the 'sources' array, populate it with all constants and variables found and their values.
+- **reasoning**: Format the output clearly.
+  **Constants:**
+  - Industry Annual Growth Rate: [Value]
+  - Revenue Per Employee (RPE): [Value in INR]
+  - ... and so on for all constants.
+  
+  **Calculated Estimated Revenue:**
+  - Ra = [Show calculation, e.g., (1300000000) x (1 + 0.12) = 1456000000]
+  - Rb = [Show calculation, e.g., 67 * 220000 = 14740000, or "Not calculated (reason)"]
+  - ... and so on.
+  
+  **Predicted Turnover:**
+  - [Show final weighted calculation, e.g., (Ra × 0.833) + (Rd × 0.167) = ...]
+  
+  **Summary:**
+  - Used: [List variables used, e.g., Ra, Rd]
+  - Dropped: [List variables dropped and why, e.g., Rb (employee count not found)]
 
-Example for 'reasoning' field:
-**Constants:**
-- Industry Annual Growth Rate: [Value]
-- Revenue Per Employee (RPE): [Value in INR]
-- ... and so on for all constants.
-
-**Calculated Estimated Revenue:**
-- Ra = [Show calculation, e.g., (1300000000) x (1 + 0.12) = 1456000000]
-- Rb = [Show calculation, e.g., 67 * 220000 = 14740000, or "Not calculated (reason)"]
-- ... and so on.
-
-**Predicted Turnover:**
-- [Show final weighted calculation, e.g., (Ra × 0.833) + (Rd × 0.167) = ...]
-
-**Summary:**
-- Used: [List variables used, e.g., Ra, Rd]
-- Dropped: [List variables dropped and why, e.g., Rb (employee count not found)]
-
-Example for 'sources' array entry:
-{ "name": "Most Recently Reported Revenue", "value": "130 Cr INR as on Mar 31, 2024" }
-
+- **sources**: For each Constant and Variable found, create an entry in the 'sources' array.
 Ensure the overall output is valid JSON matching the PredictTurnoverOutputSchema schema, with 'predictedTurnover' as a number in INR.
   `,
 });

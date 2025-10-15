@@ -32,10 +32,12 @@ export async function getPrediction(
     throw new Error("URL is required to get a prediction.");
   }
   try {
+    const benchmarkData = await getBenchmarkData();
     const turnoverPrediction = await predictTurnover({
         url,
         industry: manualIndustry,
         employees: manualEmployees,
+        benchmarkData: Array.isArray(benchmarkData) ? benchmarkData : [],
     });
 
     return {
@@ -57,7 +59,7 @@ export async function getPrediction(
 }
 
 export async function getBenchmarkData() {
-  const { data, error } = await supabase.from('turnover').select('*');
+  const { data, error } = await supabase.from('public_company_data').select('*');
   if (error) {
     console.error('Error fetching benchmark data:', error);
     return { error: error.message };

@@ -7,7 +7,7 @@ export type IndustryData = {
     base_revenue: number;
 };
 
-// This is the expected shape of the 'industry_benchmarks' table rows in Supabase.
+// This is the expected shape of the 'public_company_data' table rows in Supabase.
 export const publicCompanyData = {
     tech: {
         name: 'SaaS / Technology',
