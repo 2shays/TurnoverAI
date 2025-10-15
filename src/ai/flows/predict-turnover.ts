@@ -29,7 +29,7 @@ export async function predictTurnover(input: PredictTurnoverInput): Promise<Pred
   return predictTurnoverFlow(input);
 }
 
-const prompt = ai.definePrompt({
+const predictTurnoverPrompt = ai.definePrompt({
   name: 'predictTurnoverPrompt',
   input: {schema: PredictTurnoverInputSchema},
   output: {schema: PredictTurnoverOutputSchema},
