@@ -8,7 +8,6 @@ import { supabase } from "@/lib/supabaseClient";
 const SourceSchema = z.object({
   name: z.string(),
   value: z.string(),
-  source: z.string().url().optional(),
 });
 
 const PredictionResultSchema = z.object({

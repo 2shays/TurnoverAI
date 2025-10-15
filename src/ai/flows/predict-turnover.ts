@@ -20,7 +20,6 @@ export type PredictTurnoverInput = z.infer<typeof PredictTurnoverInputSchema>;
 const SourceSchema = z.object({
   name: z.string().describe('The name of the data point, e.g., "Most Recently Reported Revenue".'),
   value: z.string().describe('The value found for the data point.'),
-  source: z.string().url().optional().describe('The URL where the data was found.'),
 });
 
 const PredictTurnoverOutputSchema = z.object({
@@ -29,7 +28,7 @@ const PredictTurnoverOutputSchema = z.object({
   inferredIndustry: z.string().describe('The industry inferred by the AI.'),
   inferredEmployees: z.number().describe('The employee count inferred by the AI.'),
   reasoning: z.string().describe('A structured output showing the model, working, and a summary of the reasoning.'),
-  sources: z.array(SourceSchema).describe('An array of objects detailing the data points, their values, and their sources.'),
+  sources: z.array(SourceSchema).describe('An array of objects detailing the data points and their values.'),
 });
 export type PredictTurnoverOutput = z.infer<typeof PredictTurnoverOutputSchema>;
 
@@ -55,12 +54,12 @@ Provided Employee Count: {{{employees}}} (Use this for Variable B. Set inferredE
 
 Target Prediction Period: Current Fiscal Year (FY25, assume year ending March 31 of the current calendar year).
 
-Core Constraint: DO NOT use or hallucinate any data point for which reliable, external, and verifiable information cannot be found. For every data point found, you MUST provide the exact, verifiable URL in the 'source' field of the 'sources' array. It is forbidden to invent or guess a URL. If you cannot find a valid, working URL for a data point, you MUST treat that data as "Not Found" and drop the variable from the calculation.
+Core Constraint: DO NOT use or hallucinate any data point for which reliable information cannot be found. If a variable's data is missing, it must be dropped and its weight must be redistributed proportionally.
 
 Phase 1: Dynamic Profiling and Sourcing
 Identify Industry: {{#if industry}}Use the provided industry: '{{{industry}}}' and set inferredIndustry.{{else}}Analyze the website at {{{url}}} to determine the company's primary industry and sub-sector. Prioritize the company's own description on its "About Us" or "Products" page. Set the result to the 'inferredIndustry' output field.{{/if}}
 
-Source Constants: Based **only** on the identified industry, perform web searches to find the following five required constants for FY25. You MUST find these and their source URL. Search for terms like "average revenue per employee for [industry] in India".
+Source Constants: Based **only** on the identified industry, perform web searches to find the following five required constants for FY25. You MUST find these. Search for terms like "average revenue per employee for [industry] in India".
 - Industry Annual Growth Rate (Percentage used to project Ra).
 - Revenue Per Employee (RPE) (for Rb benchmark, in INR/employee).
 - Average Revenue Per Product Line (for Rc benchmark, in INR).
@@ -68,13 +67,13 @@ Source Constants: Based **only** on the identified industry, perform web searche
 - Fixed Annual Rent Cost per Location: Use a fixed INR 1.5 Cr (1,50,00,000 INR) per location.
 
 Phase 2: Mandatory Data Collection (4 Components)
-You must perform dedicated web searches to find a verifiable data point and its source URL for all four components. Note the initial weights.
+You must perform dedicated web searches to find a verifiable data point for all four components. Note the initial weights.
 **CRITICAL RESEARCH DIRECTIVE**: Prioritize data from Indian financial data platforms like **Tracxn, Tofler, InstaFinancials, and Zauba Corp**. Also search Indian credit rating agency reports from **CRISIL, ICRA, CARE, and ACUITE**. Always use the **most recently reported** fiscal year data (e.g., prefer FY24 data over FY22).
 
 Variable Data to Find (Initial Weight)
 A. Most Recently Reported Revenue (Ra) (50%): Find the **most recently reported** Annual Turnover (Revenue) and its corresponding Fiscal Year.
 B. Employee Benchmark (Rb) (20%): {{#if employees}}Use the provided count of {{{employees}}} and set inferredEmployees.{{else}}First, thoroughly analyze the company website (About Us, Our Team pages) for an employee count. If not found, perform targeted web searches using the same platforms listed above. If you find a range, take the average. Set the result to the 'inferredEmployees' output field. Do not infer 0 unless the company is explicitly a one-person entity.{{/if}}
-C. Product Lines (Rc) (20%): Analyze the company's website ({{{url}}}) to count the number of distinct major Product Lines or service Categories. The source for this is always the input URL.
+C. Product Lines (Rc) (20%): Analyze the company's website ({{{url}}}) to count the number of distinct major Product Lines or service Categories.
 D. Locations (Rd) (10%): Search for the company's "locations", "offices", or "manufacturing plants" to count key domestic/primary operational locations.
 
 Phase 3: Calculation and Weight Adjustment
@@ -90,7 +89,7 @@ Phase 3: Calculation and Weight Adjustment
 
 Phase 4: Structured Output
 - For the 'reasoning' field, provide the final calculation steps in a structured format as shown in the example.
-- For the 'sources' array, populate it with all constants and variables found, their values, and the real, verifiable URLs where you found them.
+- For the 'sources' array, populate it with all constants and variables found and their values.
 
 Example for 'reasoning' field:
 **Constants:**
@@ -110,8 +109,8 @@ Example for 'reasoning' field:
 - Used: [List variables used, e.g., Ra, Rd]
 - Dropped: [List variables dropped and why, e.g., Rb (employee count not found)]
 
-Example for 'sources' array entry (MUST BE A REAL AND SPECIFIC URL):
-{ "name": "Most Recently Reported Revenue", "value": "130 Cr INR as on Mar 31, 2024", "source": "https://tracxn.com/d/companies/r-k-synthesis-limited/__pYETMLc3LVd7gD4drazI0xsoVahd5p6vjBqY2b08U0" }
+Example for 'sources' array entry:
+{ "name": "Most Recently Reported Revenue", "value": "130 Cr INR as on Mar 31, 2024" }
 
 Ensure the overall output is valid JSON matching the PredictTurnoverOutputSchema schema, with 'predictedTurnover' as a number in INR.
   `,
