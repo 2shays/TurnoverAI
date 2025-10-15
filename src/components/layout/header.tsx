@@ -27,7 +27,7 @@ export default function Header() {
                     setActiveSection(entry.target.id);
                 }
             });
-        }, { rootMargin: "-50% 0px -50% 0px" });
+        }, { rootMargin: "-20% 0px -75% 0px" });
 
         observer.current = observerInstance;
 

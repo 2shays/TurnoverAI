@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
-import { Check, ChevronsUpDown } from "lucide-react"
+import { Check, ChevronsUpDown, X } from "lucide-react"
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -26,6 +26,7 @@ import { getPrediction, type PredictionResult } from "@/app/actions";
 import { industries, type Industry } from "@/lib/industries";
 import { cn, formatNumber, formatLargeNumber } from "@/lib/utils";
 import SourceTable from "@/components/SourceTable";
+import ReasoningDisplay from "../ReasoningDisplay";
 
 const FormSchema = z.object({
   url: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
@@ -73,12 +74,26 @@ export default function InteractiveDemo() {
     });
   };
 
+  const clearManualData = () => {
+    form.setValue("employees", undefined);
+    form.setValue("industry", "");
+  }
+
+  const getConfidenceColor = (score?: number) => {
+    if (score === undefined) return "bg-accent";
+    if (score >= 75) return "bg-green-500";
+    if (score >= 50) return "bg-yellow-500";
+    if (score >= 25) return "bg-orange-500";
+    return "bg-red-500";
+  };
+
+
   return (
     <section id="demo" className="scroll-mt-20">
       <div className="text-center mb-12">
         <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 font-headline">Turnover Prediction</h2>
         <p className="max-w-3xl mx-auto text-lg text-muted-foreground">
-          Enter a company's website address to have our AI infer its industry and employee count. You can also provide these values manually to refine the prediction.
+          Enter a company's website address to have our AI perform real-time research and analysis. You can also provide manual data to refine the prediction.
         </p>
       </div>
       <Card className="p-8 shadow-lg">
@@ -103,8 +118,14 @@ export default function InteractiveDemo() {
 
                 <p className="text-sm text-center text-muted-foreground py-1">-- OR --</p>
 
-                <div className="space-y-4 rounded-md border p-4">
-                    <p className="text-sm font-medium text-center">Provide Manual Data (Optional)</p>
+                <div className="space-y-4 rounded-md border p-4 relative">
+                    <div className="flex justify-between items-center">
+                        <p className="text-sm font-medium text-center">Provide Manual Data (Optional)</p>
+                        <Button variant="ghost" size="sm" onClick={clearManualData} className="text-xs h-7">
+                            <X className="h-3 w-3 mr-1" />
+                            Clear
+                        </Button>
+                    </div>
                     <FormField
                       control={form.control}
                       name="employees"
@@ -210,15 +231,15 @@ export default function InteractiveDemo() {
               <h3 className="text-xl font-semibold text-foreground font-headline">Prediction Results</h3>
               <div className="flex flex-col items-center gap-4 mt-4">
                 <div>
-                  <p className="text-muted-foreground">Predicted Annual Turnover</p>
+                  <p className="text-muted-foreground">Predicted Annual Turnover (FY25)</p>
                   {isPending ? <Skeleton className="h-10 w-40 mt-1" /> : <p className="text-4xl font-bold text-primary">{prediction ? formatNumber(prediction.predictedTurnover) : "₹--"}</p>}
                 </div>
                 <div className="w-full max-w-sm">
                   <div className="flex justify-between items-center mb-1">
                     <p className="text-muted-foreground">Confidence Score</p>
-                    {isPending ? <Skeleton className="h-5 w-10" /> : <p className="text-lg font-bold text-accent">{prediction ? `${prediction.confidence}%` : '--%'}</p>}
+                    {isPending ? <Skeleton className="h-5 w-10" /> : <p className="text-lg font-bold text-foreground">{prediction ? `${prediction.confidence}%` : '--%'}</p>}
                   </div>
-                  {isPending ? <Skeleton className="h-2.5 w-full mt-2" /> : <Progress value={prediction?.confidence || 0} className="h-2.5" indicatorClassName="bg-accent" />}
+                  {isPending ? <Skeleton className="h-2.5 w-full mt-2" /> : <Progress value={prediction?.confidence || 0} className="h-2.5" indicatorClassName={getConfidenceColor(prediction?.confidence)} />}
                 </div>
               </div>
                <Card className="mt-6 bg-secondary/50 text-left">
@@ -242,7 +263,7 @@ export default function InteractiveDemo() {
             {isPending ? (
               <Card className="mt-4 w-full bg-secondary/50 text-left">
                 <CardContent className="p-4 space-y-2">
-                  <p className="font-medium text-foreground">Data Sources & Reasoning:</p>
+                  <p className="font-medium text-foreground">Data Points & Reasoning:</p>
                    <div className="space-y-2 pt-1">
                       <Skeleton className="h-4 w-full" />
                       <Skeleton className="h-4 w-full" />
@@ -250,7 +271,14 @@ export default function InteractiveDemo() {
                     </div>
                 </CardContent>
               </Card>
-            ) : prediction?.sources && (
+            ) : prediction?.reasoning && (
+              <Card className="mt-4 w-full bg-secondary/50 text-left">
+                <CardContent className="p-4">
+                    <ReasoningDisplay reasoning={prediction.reasoning} />
+                </CardContent>
+              </Card>
+            )}
+            {isPending ? null : prediction?.sources && (
               <Card className="mt-4 w-full bg-secondary/50 text-left">
                 <CardContent className="p-4">
                     <SourceTable sources={prediction.sources} />

@@ -50,7 +50,7 @@ const predictTurnoverPrompt = ai.definePrompt({
   input: {schema: PredictTurnoverInputSchema},
   output: {schema: PredictTurnoverOutputSchema},
   prompt: `
-Goal: Execute a comprehensive research and calculation process to predict the current fiscal year (FY25) turnover (revenue) for the target company using a Weighted, Flexible, and Self-Adjusting Prediction Model.
+You are a highly experience financial analyst executing a comprehensive research and calculation process to predict the current fiscal year (FY25) turnover (revenue) for the target company using a Weighted, Flexible, and Self-Adjusting Prediction Model.
 
 Input URL: {{{url}}}
 {{#if industry}}
@@ -60,30 +60,30 @@ Provided Industry: {{{industry}}} (Use this industry and skip identification. Se
 Provided Employee Count: {{{employees}}} (Use this for Variable B. Set inferredEmployees to this value.)
 {{/if}}
 {{#if benchmarkData}}
-Reference Database: You have been provided with the following curated benchmark data. Use this as a strong reference point for sourcing constants like Revenue Per Employee and for normalizing your findings for scale, but you must still perform web research to find the most specific and up-to-date information for the target company.
+Reference Database: You have been provided with the following curated benchmark data. Use this as a strong reference point to compare the data on employees and revenue you will be collecting for the target company. This is a reference database make sure to normalize the data according to the information you find of the target company to get an accurate reference.
 {{/if}}
 
-Target Prediction Period: Current Fiscal Year (FY25, assume year ending March 31 of the current calendar year).
+Target Prediction Period: Focus on finding data as close to the current Fiscal Year FY25.
 
 Phase 1: Dynamic Profiling and Sourcing
 Identify Industry: {{#if industry}}Use the provided industry: '{{{industry}}}' and set inferredIndustry.{{else}}Analyze the website at {{{url}}} to determine the company's primary industry and sub-sector. Prioritize the company's own description on its "About Us" or "Products" page. Set the result to the 'inferredIndustry' output field.{{/if}}
 
-Source Constants: Based **only** on the identified industry, perform web searches to find the following five required constants for FY25. You MUST find these. Search for terms like "average revenue per employee for [industry] in India". If available for the identified industry, use the provided Benchmark Data to calculate an average 'Revenue Per Employee' and use that as a primary reference.
+Source Constants: Based **only** on the identified industry, perform web searches to find the following five required constants for FY25. Search for terms like "average annual growth rate for [industry] in India", "average revenue per employee for [industry] in India" etc. 
 - Industry Annual Growth Rate (Percentage used to project Ra).
 - Revenue Per Employee (RPE) (for Rb benchmark, in INR/employee).
 - Average Revenue Per Product Line (for Rc benchmark, in INR).
 - Average Rent-to-Revenue Ratio (for Rd benchmark, as a decimal percentage, e.g., 0.025).
 - Fixed Annual Rent Cost per Location: Use a fixed INR 1.5 Cr (1,50,00,000 INR) per location.
 
-Phase 2: Mandatory Data Collection (4 Components)
-You must perform dedicated web searches to find a verifiable data point for all four components. Note the initial weights.
+Phase 2: Mandatory Data Collection
+You must perform dedicated web searches to find a data point for all four components. Note the initial weights.
 **CRITICAL RESEARCH DIRECTIVE**: Prioritize data from Indian financial data platforms like **Tracxn, Tofler, InstaFinancials, and Zauba Corp**. Also search Indian credit rating agency reports from **CRISIL, ICRA, CARE, and ACUITE**. Always use the **most recently reported** fiscal year data (e.g., prefer FY24 data over FY22).
 
 Variable Data to Find (Initial Weight)
 A. Most Recently Reported Revenue (Ra) (50%): Find the **most recently reported** Annual Turnover (Revenue) and its corresponding Fiscal Year. Use the provided benchmarkData as a primary reference if a company match is found.
 B. Employee Benchmark (Rb) (20%): {{#if employees}}Use the provided count of {{{employees}}} and set inferredEmployees.{{else}}First, thoroughly analyze the company website (About Us, Our Team pages) for an employee count. If not found, perform targeted web searches using the same platforms listed above. If you find a range, take the average. Set the result to the 'inferredEmployees' output field. Do not infer 0 unless the company is explicitly a one-person entity.{{/if}}
-C. Product Lines (Rc) (20%): Analyze the company's website ({{{url}}}) to count the number of distinct major Product Lines or service Categories. The primary source for this is the website itself.
-D. Locations (Rd) (10%): Search for the company's "locations", "offices", or "manufacturing plants" to count key domestic/primary operational locations.
+C. Product Lines (Rc) (20%): Analyze the company's website ({{{url}}}) to count the number of distinct major Product Lines or service Categories. The primary source for this is the website itself and most likely found under the products or services page.
+D. Locations (Rd) (10%): Search for the company's "locations", "offices", or "manufacturing plants" to count key domestic/primary operational locations this would mainly be on the companies contact us page.
 
 Phase 3: Calculation and Weight Adjustment
 **CRITICAL CALCULATION RULE**: Before any calculation, you MUST convert all found values into base units of INR. For example, "130 Cr" becomes 1300000000. If you find an employee range like "11-50", you must use the average (30.5, rounded to 31) for calculation.

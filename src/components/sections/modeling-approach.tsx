@@ -3,10 +3,10 @@ import { MoveRight } from "lucide-react"
 import React from "react"
 
 const steps = [
-    { title: "1. URL Analysis", description: "Infer industry and extract/infer scale data.", highlighted: false },
-    { title: "2. Company Matching", description: "Identify similar public companies based on inferred industry and scale.", highlighted: false },
-    { title: "3. Model Application", description: "Apply AI model trained on public data to the target's inferred data.", highlighted: true },
-    { title: "4. Prediction & Scoring", description: "Generate turnover estimate and a confidence score.", highlighted: false },
+    { title: "1. Data Sourcing", description: "Scans financial data platforms and company websites for key variables.", highlighted: false },
+    { title: "2. Data Normalization", description: "Uses internal benchmark data to standardize and validate the sourced information.", highlighted: false },
+    { title: "3. Revenue Projection", description: "Projects historical revenue to the current fiscal year using industry growth rates.", highlighted: true },
+    { title: "4. Final Calculation", description: "Computes the final turnover prediction using a weighted, multi-variable equation.", highlighted: false },
 ]
 
 export default function ModelingApproachSection() {
@@ -15,23 +15,20 @@ export default function ModelingApproachSection() {
             <div className="text-center mb-16">
                 <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4 font-headline">Our Predictive Modeling Process</h2>
                 <p className="max-w-3xl mx-auto text-lg text-muted-foreground">
-                    The model follows a systematic process to transform a company's web address into a reliable turnover prediction. It uses the URL to infer industry and scale, finds comparable public companies, and then generates and validates the final estimate.
+                    Our model uses a multi-step process that combines real-time data sourcing, benchmark normalization, and financial projection to generate a reliable turnover estimate.
                 </p>
             </div>
-            <div className="flex flex-col md:flex-row items-center justify-center gap-4">
+            <div className="grid md:grid-cols-4 items-stretch justify-center gap-4">
                 {steps.map((step, index) => (
                     <React.Fragment key={step.title}>
-                        <Card className={`w-full md:w-52 text-center ${step.highlighted ? 'bg-primary/10 border-primary/50' : ''}`}>
+                        <Card className={`w-full text-center flex flex-col ${step.highlighted ? 'bg-primary/10 border-primary/50' : ''}`}>
                             <CardHeader className="pb-2">
                                 <CardTitle className={`text-base font-semibold ${step.highlighted ? 'text-primary' : 'text-foreground'}`}>{step.title}</CardTitle>
                             </CardHeader>
-                            <CardContent>
+                            <CardContent className="flex-grow">
                                 <CardDescription className={step.highlighted ? 'text-primary/80' : ''}>{step.description}</CardDescription>
                             </CardContent>
                         </Card>
-                        {index < steps.length - 1 && (
-                            <MoveRight className="text-muted-foreground/50 h-8 w-8 shrink-0 md:rotate-0 rotate-90" />
-                        )}
                     </React.Fragment>
                 ))}
             </div>
