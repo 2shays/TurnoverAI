@@ -31,18 +31,11 @@ export async function getPrediction(
         employees: manualEmployees,
     });
 
-    // The new prompt doesn't explicitly return inferred employees/industry.
-    // We will need to parse them from the reasoning if needed, or adjust the prompt.
-    // For now, we'll return the manual ones if provided, or placeholders.
-    const inferredIndustry = manualIndustry || "Inferred by AI";
-    const inferredEmployees = manualEmployees || 0; // The AI will infer this, but it's not a direct output field.
-
-
     return {
       predictedTurnover: turnoverPrediction.predictedTurnover,
       confidence: turnoverPrediction.confidenceScore,
-      inferredIndustry: inferredIndustry,
-      inferredEmployees: inferredEmployees,
+      inferredIndustry: turnoverPrediction.inferredIndustry,
+      inferredEmployees: turnoverPrediction.inferredEmployees,
       reasoning: turnoverPrediction.reasoning,
       url,
     };

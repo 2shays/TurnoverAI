@@ -20,6 +20,8 @@ export type PredictTurnoverInput = z.infer<typeof PredictTurnoverInputSchema>;
 const PredictTurnoverOutputSchema = z.object({
   predictedTurnover: z.number().describe('The predicted annual turnover in INR for FY25.'),
   confidenceScore: z.number().describe('A confidence score for the prediction, from 0 to 100.'),
+  inferredIndustry: z.string().describe('The industry inferred by the AI.'),
+  inferredEmployees: z.number().describe('The employee count inferred by the AI.'),
   reasoning: z.string().describe('A structured output showing the model, working, and a summary of the reasoning.'),
 });
 export type PredictTurnoverOutput = z.infer<typeof PredictTurnoverOutputSchema>;
@@ -38,10 +40,10 @@ Goal: Execute a comprehensive research and calculation process to predict the cu
 
 Input URL: {{{url}}}
 {{#if industry}}
-Provided Industry: {{{industry}}} (Use this industry and skip identification)
+Provided Industry: {{{industry}}} (Use this industry and skip identification. Set inferredIndustry to this value.)
 {{/if}}
 {{#if employees}}
-Provided Employee Count: {{{employees}}} (Use this for Variable B)
+Provided Employee Count: {{{employees}}} (Use this for Variable B. Set inferredEmployees to this value.)
 {{/if}}
 
 Target Prediction Period: Current Fiscal Year (FY25, assume year ending March 31 of the current calendar year).
@@ -49,7 +51,7 @@ Target Prediction Period: Current Fiscal Year (FY25, assume year ending March 31
 Core Constraint: DO NOT use or hallucinate any data point (A, B, C, or D) for which reliable, external, and verifiable information cannot be found. If a variable's data is missing, it must be dropped and its weight must be redistributed proportionally among the remaining, found variables.
 
 Phase 1: Dynamic Profiling and Sourcing
-Identify Industry: {{#if industry}}Use the provided industry: '{{{industry}}}'.{{else}}Determine the primary industry and sub-sector of the company at the URL.{{/if}}
+Identify Industry: {{#if industry}}Use the provided industry: '{{{industry}}}' and set inferredIndustry.{{else}}Determine the primary industry and sub-sector of the company at the URL. Set the result to the 'inferredIndustry' output field.{{/if}}
 
 Source Constants: Based only on the identified industry, dynamically source the following five required constants for the current fiscal year (FY25):
 
@@ -64,7 +66,7 @@ Attempt to find a verifiable data point for all four components. Note the initia
 
 Variable Data to Find Initial Weight
 A. Confirmed Revenue (Ra) Last reported Annual Turnover (Revenue) and its corresponding Fiscal Year (e.g., FY24). Initial weight=50%
-B. Employee Benchmark (Rb0) {{#if employees}}Use the provided count of {{{employees}}}.{{else}}Most recent reported total number of employees from the website or reliable external source.{{/if}} Initial weight=20%
+B. Employee Benchmark (Rb0) {{#if employees}}Use the provided count of {{{employees}}} and set inferredEmployees.{{else}}Most recent reported total number of employees from the website or reliable external source. Set the result to the 'inferredEmployees' output field.{{/if}} Initial weight=20%
 C. Product Lines (Rc) Count of distinct major Product Lines or Categories listed on the company's public profiles or website. Initial weight=20%
 D. Locations (Rd) Count of key domestic/primary manufacturing or registered office locations. Initial weight=10%
 
@@ -82,14 +84,14 @@ Compute Final Predicted Turnover: Apply the adjusted weights to the calculated R
 
 Predicted Turnover= ∑{Found Variables}(Ri×Adjusted Weighti)
 
-Phase 4: Structured Output
-Present the result in the exact format below, ensuring the dynamic constants and the weight adjustment logic are clearly detailed in the working. The final 'reasoning' output must contain all three sections.
+Phase 4: Structured Output for 'reasoning' field
+Present the result in the exact format below for the 'reasoning' field. The output must contain both sections.
 
-**Prediction Model and Working**
-(Show the final adjusted weights, the sourced industry constants, and the full calculation table).
+**Prediction Working**
+(Show the final equation with the values you found for each variable. For example: Predicted Turnover = (Ra * 0.5) + (Rb * 0.2) + (Rc * 0.2) + (Rd * 0.1) = (100cr * 0.5) + ... = 150cr)
 
-**Short Summary and Reasoning**
-(Explain the final number and explicitly state which variables were used and, if necessary, which were dropped and why).
+**Summary**
+(Briefly explain which variables were used and which were dropped and why. e.g., "Used reported revenue and employee count. Product lines and locations were not found on the website.")
 
 Ensure the overall output is valid JSON matching the PredictTurnoverOutputSchema schema, with 'predictedTurnover' as a number in INR.
   `,
