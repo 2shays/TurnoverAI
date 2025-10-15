@@ -88,7 +88,7 @@ Phase 4: Structured Output for 'reasoning' field
 Present the result in the exact format below for the 'reasoning' field. The output must contain both sections.
 
 **Prediction Working**
-(Show the final equation with the values you found for each variable. For example: Predicted Turnover = (Ra * 0.5) + (Rb * 0.2) + (Rc * 0.2) + (Rd * 0.1) = (100cr * 0.5) + ... = 150cr)
+(Show the final equation with the values you found for each variable. For example: Predicted Turnover = (Ra * 0.5) + (Rb * 0.2) + (Rc * 0.2) + (Rd * 0.1) = (100cr * 0.5) + ... = 150cr. Show the full calculation with the real numbers you found.)
 
 **Summary**
 (Briefly explain which variables were used and which were dropped and why. e.g., "Used reported revenue and employee count. Product lines and locations were not found on the website.")
