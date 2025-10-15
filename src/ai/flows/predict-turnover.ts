@@ -48,64 +48,60 @@ Provided Employee Count: {{{employees}}} (Use this for Variable B. Set inferredE
 
 Target Prediction Period: Current Fiscal Year (FY25, assume year ending March 31 of the current calendar year).
 
-Core Constraint: DO NOT use or hallucinate any data point (A, B, C, or D) for which reliable, external, and verifiable information cannot be found. If a variable's data is missing, it must be dropped and its weight must be redistributed proportionally among the remaining, found variables.
+Core Constraint: DO NOT use or hallucinate any data point (A, B, C, or D) for which reliable, external, and verifiable information cannot be found. Perform diligent web searches for each data point. If a variable's data is missing after thorough research, it must be dropped and its weight must be redistributed proportionally among the remaining, found variables.
 
 Phase 1: Dynamic Profiling and Sourcing
-Identify Industry: {{#if industry}}Use the provided industry: '{{{industry}}}' and set inferredIndustry.{{else}}Determine the primary industry and sub-sector of the company at the URL. Set the result to the 'inferredIndustry' output field.{{/if}}
+Identify Industry: {{#if industry}}Use the provided industry: '{{{industry}}}' and set inferredIndustry.{{else}}Analyze the website at {{{url}}} to determine the company's primary industry and sub-sector. Prioritize the company's own description on its "About Us" or "Products" page. Set the result to the 'inferredIndustry' output field.{{/if}}
 
-Source Constants: Based only on the identified industry, dynamically source the following five required constants for the current fiscal year (FY25):
+Source Constants: Based **only** on the identified industry, perform web searches to find the following five required constants for FY25. You MUST find these; do not state "Not found". Search for terms like "average revenue per employee for [industry] in India".
 
-Industry Annual Growth Rate (Percentage used to project Ra).
-Revenue Per Employee (RPE) (for Rb benchmark, in Cr/employee).
-Average Revenue Per Product Line (for Rc benchmark, in Cr).
-Average Rent-to-Revenue Ratio (for Rd benchmark, as a decimal percentage, e.g., 0.025).
-Fixed Annual Rent Cost per Location: Use a fixed INR 1.5 Cr/location.
+- Industry Annual Growth Rate (Percentage used to project Ra).
+- Revenue Per Employee (RPE) (for Rb benchmark, in INR/employee).
+- Average Revenue Per Product Line (for Rc benchmark, in INR).
+- Average Rent-to-Revenue Ratio (for Rd benchmark, as a decimal percentage, e.g., 0.025).
+- Fixed Annual Rent Cost per Location: Use a fixed INR 1.5 Cr (1,50,00,000 INR) per location.
 
 Phase 2: Mandatory Data Collection (4 Components)
-Attempt to find a verifiable data point for all four components. Note the initial weights.
+You must perform dedicated web searches to find a verifiable data point for all four components. Note the initial weights.
 
-Variable Data to Find Initial Weight
-A. Confirmed Revenue (Ra) Last reported Annual Turnover (Revenue) and its corresponding Fiscal Year (e.g., FY24). Initial weight=50%
-B. Employee Benchmark (Rb0) {{#if employees}}Use the provided count of {{{employees}}} and set inferredEmployees.{{else}}Most recent reported total number of employees from the website or reliable external source. Set the result to the 'inferredEmployees' output field.{{/if}} Initial weight=20%
-C. Product Lines (Rc) Count of distinct major Product Lines or Categories listed on the company's public profiles or website. Initial weight=20%
-D. Locations (Rd) Count of key domestic/primary manufacturing or registered office locations. Initial weight=10%
+Variable Data to Find (Initial Weight)
+A. Confirmed Revenue (Ra) (50%): Search for "[Company Name] revenue", "[Company Name] turnover", "[Company Name] annual report" on financial data sites (e.g., Tofler, Tracxn). Find the most recently reported Annual Turnover (Revenue) and its corresponding Fiscal Year (e.g., FY24).
+B. Employee Benchmark (Rb) (20%): {{#if employees}}Use the provided count of {{{employees}}} and set inferredEmployees.{{else}}First, thoroughly analyze the company website (About Us, Our Team pages) for an employee count. If not found, perform a targeted web search for "[Company Name] number of employees". If you find a range, take the average. Set the result to the 'inferredEmployees' output field. Do not infer 0 unless the company is explicitly a one-person entity.{{/if}}
+C. Product Lines (Rc) (20%): Analyze the company's website to count the number of distinct major Product Lines or service Categories.
+D. Locations (Rd) (10%): Search for the company's "locations", "offices", or "manufacturing plants" to count key domestic/primary operational locations.
 
 Phase 3: Calculation and Weight Adjustment
-Adjust Weights: Sum the initial weights of all found variables. If any variable was not found (e.g., Rb is missing, initial weight 20%), redistribute its weight proportionally across the remaining found variables. The final sum of the adjusted weights must equal 1.00 (100%).
-
-Calculate Estimated Revenue (Ri):
-
-Ra=(Confirmed Revenue)x(1+Industry Growth Rate)
-Rb=(Employee Count)xRPE
-Rc=(Product Line Count)xAvg. Rev./Line
-Rd=((Location Count)x1.5)/Rent-to-Revenue Ratio
-​
-Compute Final Predicted Turnover: Apply the adjusted weights to the calculated Ri values for only the found variables:
-
-Predicted Turnover= ∑{Found Variables}(Ri×Adjusted Weighti)
+- Adjust Weights: Sum the initial weights of all *found* variables. If any variable was not found, redistribute its weight proportionally across the remaining found variables. The final sum of adjusted weights must be 1.00 (100%).
+- Calculate Estimated Revenue (Ri): All calculations must be in base units of INR (not Cr or L).
+  - Ra = (Found Confirmed Revenue) × (1 + Industry Growth Rate)
+  - Rb = (Found Employee Count) × RPE
+  - Rc = (Found Product Line Count) × Avg. Rev./Line
+  - Rd = ((Found Location Count) × 15000000) / Rent-to-Revenue Ratio
+- Compute Final Predicted Turnover: Apply the adjusted weights to the calculated Ri values for only the *found* variables.
+  - Predicted Turnover = ∑{for each Found Variable i} (Ri × Adjusted Weight_i)
 
 Phase 4: Structured Output for 'reasoning' field
-Present the result for the 'reasoning' field in the format below. Use the exact headings including the asterisks. For each list item, start with a hyphen.
+Present the result for the 'reasoning' field in the exact format below. Use the exact headings including the asterisks. For each list item, start with a hyphen. Show the actual numbers in the equations.
 
 **Constants:**
 - Industry Annual Growth Rate: [Value]
-- Revenue Per Employee (RPE): [Value or "Not found"]
-- Average Revenue Per Product Line: [Value or "Not found"]
+- Revenue Per Employee (RPE): [Value in INR or "Not found"]
+- Average Revenue Per Product Line: [Value in INR or "Not found"]
 - Average Rent-to-Revenue Ratio: [Value]
-- Fixed Annual Rent Cost per Location: [Value]
+- Fixed Annual Rent Cost per Location: 1,50,00,000 INR
 
 **Calculated Estimated Revenue:**
-- Ra = [Show calculation, e.g., (35.80 Cr) x (1 + 0.12) = 40.096 Cr]
-- Rb = [Show calculation or "Not calculated (reason)"]
+- Ra = [Show calculation, e.g., (358000000) x (1 + 0.12) = 400960000]
+- Rb = [Show calculation, e.g., 250 x 220000 = 55000000, or "Not calculated (reason)"]
 - Rc = [Show calculation or "Not calculated (reason)"]
-- Rd = [Show calculation, e.g., ((2) x 1.5) / 0.02 = 150 Cr]
+- Rd = [Show calculation, e.g., (2 x 15000000) / 0.02 = 1500000000]
 
 **Predicted Turnover:**
-- [Show final weighted calculation, e.g., (Ra x 0.833) + (Rd x 0.167) = 33.4 Cr + 25 Cr = 58.4 Cr]
+- [Show final weighted calculation, e.g., (Ra × 0.833) + (Rd × 0.167) = 334000000 + 250500000 = 584500000]
 
 **Summary:**
 - Used: [List variables used, e.g., Ra, Rd]
-- Dropped: [List variables dropped and why, e.g., Rb (only a range was found), Rc (constant not found)]
+- Dropped: [List variables dropped and why, e.g., Rb (employee count not found), Rc (constant not found)]
 
 Ensure the overall output is valid JSON matching the PredictTurnoverOutputSchema schema, with 'predictedTurnover' as a number in INR.
   `,
