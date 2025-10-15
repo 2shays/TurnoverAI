@@ -25,6 +25,7 @@ import { useToast } from "@/hooks/use-toast";
 import { getPrediction, type PredictionResult } from "@/app/actions";
 import { industries, type Industry } from "@/lib/industries";
 import { cn, formatNumber, formatLargeNumber } from "@/lib/utils";
+import ReasoningDisplay from "@/components/ReasoningDisplay";
 
 const FormSchema = z.object({
   url: z.string().url({ message: "Please enter a valid URL." }).optional().or(z.literal('')),
@@ -251,9 +252,8 @@ export default function InteractiveDemo() {
               </Card>
             ) : prediction?.reasoning && (
               <Card className="mt-4 w-full bg-secondary/50 text-left">
-                <CardContent className="p-4 space-y-2">
-                  <p className="font-medium text-foreground">Reasoning:</p>
-                  <p className="text-sm text-muted-foreground whitespace-pre-wrap">{prediction.reasoning}</p>
+                <CardContent className="p-4">
+                    <ReasoningDisplay reasoning={prediction.reasoning} />
                 </CardContent>
               </Card>
             )}

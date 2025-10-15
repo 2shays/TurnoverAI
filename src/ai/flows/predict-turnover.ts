@@ -85,13 +85,27 @@ Compute Final Predicted Turnover: Apply the adjusted weights to the calculated R
 Predicted Turnover= ∑{Found Variables}(Ri×Adjusted Weighti)
 
 Phase 4: Structured Output for 'reasoning' field
-Present the result in the exact format below for the 'reasoning' field. The output must contain both sections.
+Present the result for the 'reasoning' field in the format below. Use the exact headings including the asterisks. For each list item, start with a hyphen.
 
-**Prediction Working**
-(Show the final equation with the values you found for each variable. For example: Predicted Turnover = (Ra * 0.5) + (Rb * 0.2) + (Rc * 0.2) + (Rd * 0.1) = (100cr * 0.5) + ... = 150cr. Show the full calculation with the real numbers you found.)
+**Constants:**
+- Industry Annual Growth Rate: [Value]
+- Revenue Per Employee (RPE): [Value or "Not found"]
+- Average Revenue Per Product Line: [Value or "Not found"]
+- Average Rent-to-Revenue Ratio: [Value]
+- Fixed Annual Rent Cost per Location: [Value]
 
-**Summary**
-(Briefly explain which variables were used and which were dropped and why. e.g., "Used reported revenue and employee count. Product lines and locations were not found on the website.")
+**Calculated Estimated Revenue:**
+- Ra = [Show calculation, e.g., (35.80 Cr) x (1 + 0.12) = 40.096 Cr]
+- Rb = [Show calculation or "Not calculated (reason)"]
+- Rc = [Show calculation or "Not calculated (reason)"]
+- Rd = [Show calculation, e.g., ((2) x 1.5) / 0.02 = 150 Cr]
+
+**Predicted Turnover:**
+- [Show final weighted calculation, e.g., (Ra x 0.833) + (Rd x 0.167) = 33.4 Cr + 25 Cr = 58.4 Cr]
+
+**Summary:**
+- Used: [List variables used, e.g., Ra, Rd]
+- Dropped: [List variables dropped and why, e.g., Rb (only a range was found), Rc (constant not found)]
 
 Ensure the overall output is valid JSON matching the PredictTurnoverOutputSchema schema, with 'predictedTurnover' as a number in INR.
   `,
