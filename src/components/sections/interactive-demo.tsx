@@ -116,15 +116,15 @@ export default function InteractiveDemo() {
                   )}
                 />
 
-                <p className="text-sm text-center text-muted-foreground py-1">-- OR --</p>
-
                 <div className="space-y-4 rounded-md border p-4 relative">
-                    <div className="flex justify-between items-center">
-                        <p className="text-sm font-medium text-center">Provide Manual Data (Optional)</p>
-                        <Button variant="ghost" size="sm" onClick={clearManualData} className="text-xs h-7">
-                            <X className="h-3 w-3 mr-1" />
-                            Clear
-                        </Button>
+                    <div className="flex justify-between items-center mb-2">
+                        <p className="text-sm font-medium">Provide Manual Data (Optional)</p>
+                        {(form.getValues("employees") || form.getValues("industry")) && (
+                            <Button variant="ghost" size="sm" onClick={clearManualData} className="text-xs h-7">
+                                <X className="h-3 w-3 mr-1" />
+                                Clear
+                            </Button>
+                        )}
                     </div>
                     <FormField
                       control={form.control}
@@ -263,22 +263,32 @@ export default function InteractiveDemo() {
             {isPending ? (
               <Card className="mt-4 w-full bg-secondary/50 text-left">
                 <CardContent className="p-4 space-y-2">
-                  <p className="font-medium text-foreground">Data Points & Reasoning:</p>
+                  <p className="font-medium text-foreground">Calculation:</p>
                    <div className="space-y-2 pt-1">
-                      <Skeleton className="h-4 w-full" />
                       <Skeleton className="h-4 w-full" />
                       <Skeleton className="h-4 w-2/5" />
                     </div>
                 </CardContent>
               </Card>
-            ) : prediction?.reasoning && (
+            ) : prediction?.equation && (
               <Card className="mt-4 w-full bg-secondary/50 text-left">
                 <CardContent className="p-4">
-                    <ReasoningDisplay reasoning={prediction.reasoning} />
+                    <ReasoningDisplay equation={prediction.equation} />
                 </CardContent>
               </Card>
             )}
-            {isPending ? null : prediction?.sources && (
+            {isPending ? (
+                 <Card className="mt-4 w-full bg-secondary/50 text-left">
+                    <CardContent className="p-4 space-y-2">
+                    <p className="font-medium text-foreground">Data Points:</p>
+                    <div className="space-y-2 pt-1">
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-full" />
+                        <Skeleton className="h-4 w-2/5" />
+                        </div>
+                    </CardContent>
+              </Card>
+            ) : prediction?.sources && prediction.sources.length > 0 && (
               <Card className="mt-4 w-full bg-secondary/50 text-left">
                 <CardContent className="p-4">
                     <SourceTable sources={prediction.sources} />

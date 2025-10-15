@@ -36,6 +36,7 @@ const PredictTurnoverOutputSchema = z.object({
   inferredIndustry: z.string().describe('The industry inferred by the AI.'),
   inferredEmployees: z.number().describe('The employee count inferred by the AI.'),
   reasoning: z.string().describe('A structured output showing the model, working, and a summary of the reasoning.'),
+  equation: z.string().describe('The final mathematical equation used for the prediction. e.g., "(1456000000 * 0.833) + (250000000 * 0.167) = 1420000000"'),
   sources: z.array(SourceSchema).describe('An array of objects detailing the data points and their values.'),
 });
 export type PredictTurnoverOutput = z.infer<typeof PredictTurnoverOutputSchema>;
@@ -114,6 +115,8 @@ Phase 4: Structured Output
   **Summary:**
   - Used: [List variables used, e.g., Ra, Rd]
   - Dropped: [List variables dropped and why, e.g., Rb (employee count not found)]
+
+- **equation**: Place ONLY the final weighted calculation string here. Example: "(1456000000 * 0.833) + (250000000 * 0.167) = 1420000000"
 
 - **sources**: For each Constant and Variable found, create an entry in the 'sources' array.
 Ensure the overall output is valid JSON matching the PredictTurnoverOutputSchema schema, with 'predictedTurnover' as a number in INR.

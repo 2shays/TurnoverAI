@@ -16,6 +16,7 @@ const PredictionResultSchema = z.object({
   inferredIndustry: z.string(),
   inferredEmployees: z.number(),
   reasoning: z.string(),
+  equation: z.string(),
   url: z.string(),
   sources: z.array(SourceSchema),
 });
@@ -32,12 +33,22 @@ export async function getPrediction(
     throw new Error("URL is required to get a prediction.");
   }
   try {
-    const benchmarkData = await getBenchmarkData();
+    const { data: benchmarkData, error } = await supabase.from('turnover').select('*');
+    if (error) {
+      console.error('Error fetching benchmark data:', error);
+      // We don't want to fail the whole prediction if this fails, so we'll pass an empty array.
+    }
+    
     const turnoverPrediction = await predictTurnover({
         url,
         industry: manualIndustry,
         employees: manualEmployees,
-        benchmarkData: Array.isArray(benchmarkData) ? benchmarkData : [],
+        benchmarkData: Array.isArray(benchmarkData) ? benchmarkData.map(item => ({
+          company_name: item.company_name,
+          turnover: item.turnover,
+          employees: item.employees,
+          industry: item.industry,
+        })) : [],
     });
 
     return {
@@ -46,6 +57,7 @@ export async function getPrediction(
       inferredIndustry: turnoverPrediction.inferredIndustry,
       inferredEmployees: turnoverPrediction.inferredEmployees,
       reasoning: turnoverPrediction.reasoning,
+      equation: turnoverPrediction.equation,
       url,
       sources: turnoverPrediction.sources,
     };
@@ -57,14 +69,3 @@ export async function getPrediction(
     throw new Error("Failed to generate prediction. Please try another URL.");
   }
 }
-
-export async function getBenchmarkData() {
-  const { data, error } = await supabase.from('turnover').select('*');
-  if (error) {
-    console.error('Error fetching benchmark data:', error);
-    return { error: error.message };
-  }
-  return data;
-}
-
-    
