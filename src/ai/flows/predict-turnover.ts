@@ -55,7 +55,7 @@ Provided Employee Count: {{{employees}}} (Use this for Variable B. Set inferredE
 
 Target Prediction Period: Current Fiscal Year (FY25, assume year ending March 31 of the current calendar year).
 
-Core Constraint: DO NOT use or hallucinate any data point for which reliable, external, and verifiable information cannot be found. If a variable's data is missing after thorough research, it must be dropped and its weight must be redistributed proportionally among the remaining, found variables. For every data point found, you MUST provide the URL in the 'source' field of the 'sources' array.
+Core Constraint: DO NOT use or hallucinate any data point for which reliable, external, and verifiable information cannot be found. If a variable's data is missing after thorough research, it must be dropped and its weight must be redistributed proportionally among the remaining, found variables. For every data point found, you MUST provide the exact, verifiable URL in the 'source' field of the 'sources' array. It is forbidden to invent or guess a URL.
 
 Phase 1: Dynamic Profiling and Sourcing
 Identify Industry: {{#if industry}}Use the provided industry: '{{{industry}}}' and set inferredIndustry.{{else}}Analyze the website at {{{url}}} to determine the company's primary industry and sub-sector. Prioritize the company's own description on its "About Us" or "Products" page. Set the result to the 'inferredIndustry' output field.{{/if}}
@@ -110,7 +110,7 @@ Example for 'reasoning' field:
 - Used: [List variables used, e.g., Ra, Rd]
 - Dropped: [List variables dropped and why, e.g., Rb (employee count not found)]
 
-Example for 'sources' array entry:
+Example for 'sources' array entry (MUST BE A REAL AND SPECIFIC URL):
 { "name": "Most Recently Reported Revenue", "value": "130 Cr INR as on Mar 31, 2024", "source": "https://tracxn.com/d/companies/r-k-synthesis-limited/__pYETMLc3LVd7gD4drazI0xsoVahd5p6vjBqY2b08U0" }
 
 Ensure the overall output is valid JSON matching the PredictTurnoverOutputSchema schema, with 'predictedTurnover' as a number in INR.
