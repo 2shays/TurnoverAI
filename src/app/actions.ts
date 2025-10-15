@@ -5,6 +5,12 @@ import { predictTurnover } from "@/ai/flows/predict-turnover";
 import { supabase } from "@/lib/supabaseClient";
 
 
+const SourceSchema = z.object({
+  name: z.string(),
+  value: z.string(),
+  source: z.string().url().optional(),
+});
+
 const PredictionResultSchema = z.object({
   predictedTurnover: z.number(),
   confidence: z.number(),
@@ -12,9 +18,11 @@ const PredictionResultSchema = z.object({
   inferredEmployees: z.number(),
   reasoning: z.string(),
   url: z.string(),
+  sources: z.array(SourceSchema),
 });
 
 export type PredictionResult = z.infer<typeof PredictionResultSchema>;
+export type Source = z.infer<typeof SourceSchema>;
 
 export async function getPrediction(
   url: string,
@@ -38,6 +46,7 @@ export async function getPrediction(
       inferredEmployees: turnoverPrediction.inferredEmployees,
       reasoning: turnoverPrediction.reasoning,
       url,
+      sources: turnoverPrediction.sources,
     };
   } catch (error) {
     console.error("Error in getPrediction action:", error);
