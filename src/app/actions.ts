@@ -59,10 +59,12 @@ export async function getPrediction(
 }
 
 export async function getBenchmarkData() {
-  const { data, error } = await supabase.from('public_company_data').select('*');
+  const { data, error } = await supabase.from('turnover').select('*');
   if (error) {
     console.error('Error fetching benchmark data:', error);
     return { error: error.message };
   }
   return data;
 }
+
+    

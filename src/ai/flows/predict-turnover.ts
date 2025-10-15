@@ -11,11 +11,10 @@ import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
 
 const IndustryBenchmarkSchema = z.object({
-  name: z.string(),
-  avg_employees: z.number(),
-  avg_web_traffic: z.number(),
-  revenue_per_employee: z.number(),
-  base_revenue: z.number(),
+  industry: z.string(),
+  turnover: z.number(),
+  employees: z.number(),
+  company_name: z.string().optional(),
 });
 
 const PredictTurnoverInputSchema = z.object({
@@ -66,12 +65,10 @@ Reference Database: You have been provided with the following curated benchmark 
 
 Target Prediction Period: Current Fiscal Year (FY25, assume year ending March 31 of the current calendar year).
 
-Core Constraint: DO NOT use or hallucinate any data point for which reliable information cannot be found. If a variable's data is missing, it must be dropped and its weight must be redistributed proportionally.
-
 Phase 1: Dynamic Profiling and Sourcing
 Identify Industry: {{#if industry}}Use the provided industry: '{{{industry}}}' and set inferredIndustry.{{else}}Analyze the website at {{{url}}} to determine the company's primary industry and sub-sector. Prioritize the company's own description on its "About Us" or "Products" page. Set the result to the 'inferredIndustry' output field.{{/if}}
 
-Source Constants: Based **only** on the identified industry, perform web searches to find the following five required constants for FY25. You MUST find these. Search for terms like "average revenue per employee for [industry] in India". Use the provided Benchmark Data as a primary reference if available for the identified industry.
+Source Constants: Based **only** on the identified industry, perform web searches to find the following five required constants for FY25. You MUST find these. Search for terms like "average revenue per employee for [industry] in India". If available for the identified industry, use the provided Benchmark Data to calculate an average 'Revenue Per Employee' and use that as a primary reference.
 - Industry Annual Growth Rate (Percentage used to project Ra).
 - Revenue Per Employee (RPE) (for Rb benchmark, in INR/employee).
 - Average Revenue Per Product Line (for Rc benchmark, in INR).
@@ -83,9 +80,9 @@ You must perform dedicated web searches to find a verifiable data point for all 
 **CRITICAL RESEARCH DIRECTIVE**: Prioritize data from Indian financial data platforms like **Tracxn, Tofler, InstaFinancials, and Zauba Corp**. Also search Indian credit rating agency reports from **CRISIL, ICRA, CARE, and ACUITE**. Always use the **most recently reported** fiscal year data (e.g., prefer FY24 data over FY22).
 
 Variable Data to Find (Initial Weight)
-A. Most Recently Reported Revenue (Ra) (50%): Find the **most recently reported** Annual Turnover (Revenue) and its corresponding Fiscal Year. Use the provided benchmarkData as a reference.
+A. Most Recently Reported Revenue (Ra) (50%): Find the **most recently reported** Annual Turnover (Revenue) and its corresponding Fiscal Year. Use the provided benchmarkData as a primary reference if a company match is found.
 B. Employee Benchmark (Rb) (20%): {{#if employees}}Use the provided count of {{{employees}}} and set inferredEmployees.{{else}}First, thoroughly analyze the company website (About Us, Our Team pages) for an employee count. If not found, perform targeted web searches using the same platforms listed above. If you find a range, take the average. Set the result to the 'inferredEmployees' output field. Do not infer 0 unless the company is explicitly a one-person entity.{{/if}}
-C. Product Lines (Rc) (20%): Analyze the company's website ({{{url}}}) to count the number of distinct major Product Lines or service Categories.
+C. Product Lines (Rc) (20%): Analyze the company's website ({{{url}}}) to count the number of distinct major Product Lines or service Categories. The primary source for this is the website itself.
 D. Locations (Rd) (10%): Search for the company's "locations", "offices", or "manufacturing plants" to count key domestic/primary operational locations.
 
 Phase 3: Calculation and Weight Adjustment
@@ -134,3 +131,5 @@ const predictTurnoverFlow = ai.defineFlow(
     return output!;
   }
 );
+
+    
