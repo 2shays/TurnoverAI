@@ -69,14 +69,16 @@ Source Constants: Based **only** on the identified industry, perform web searche
 
 Phase 2: Mandatory Data Collection (4 Components)
 You must perform dedicated web searches to find a verifiable data point and its source URL for all four components. Note the initial weights.
+**CRITICAL RESEARCH DIRECTIVE**: Prioritize data from Indian financial data platforms like **Tracxn, Tofler, InstaFinancials, and Zauba Corp**. Also search Indian credit rating agency reports from **CRISIL, ICRA, CARE, and ACUITE**. Always use the **most recently reported** fiscal year data (e.g., prefer FY24 data over FY22).
 
 Variable Data to Find (Initial Weight)
-A. Most Recently Reported Revenue (Ra) (50%): Search for "[Company Name] revenue FY24", "[Company Name] turnover", "[Company Name] annual report". Prioritize data from Indian financial data platforms like **Tracxn, Tofler, InstaFinancials, Indiamart, and Zauba Corp**. Also search Indian credit rating agency reports from **CRISIL, ICRA, CARE, and ACUITE**. Find the **most recently reported** Annual Turnover (Revenue) and its corresponding Fiscal Year.
-B. Employee Benchmark (Rb) (20%): {{#if employees}}Use the provided count of {{{employees}}} and set inferredEmployees.{{else}}First, thoroughly analyze the company website (About Us, Our Team pages) for an employee count. If not found, perform targeted web searches using the same platforms listed for Revenue (Tracxn, Tofler, etc.) for "[Company Name] number of employees". If you find a range, take the average. Set the result to the 'inferredEmployees' output field. Do not infer 0 unless the company is explicitly a one-person entity.{{/if}}
+A. Most Recently Reported Revenue (Ra) (50%): Find the **most recently reported** Annual Turnover (Revenue) and its corresponding Fiscal Year.
+B. Employee Benchmark (Rb) (20%): {{#if employees}}Use the provided count of {{{employees}}} and set inferredEmployees.{{else}}First, thoroughly analyze the company website (About Us, Our Team pages) for an employee count. If not found, perform targeted web searches using the same platforms listed above. If you find a range, take the average. Set the result to the 'inferredEmployees' output field. Do not infer 0 unless the company is explicitly a one-person entity.{{/if}}
 C. Product Lines (Rc) (20%): Analyze the company's website to count the number of distinct major Product Lines or service Categories.
 D. Locations (Rd) (10%): Search for the company's "locations", "offices", or "manufacturing plants" to count key domestic/primary operational locations.
 
 Phase 3: Calculation and Weight Adjustment
+**CRITICAL CALCULATION RULE**: Before any calculation, you MUST convert all found values into base units of INR. For example, "130 Cr" becomes 1300000000. If you find an employee range like "11-50", you must use the average (30.5, rounded to 31) for calculation.
 - Adjust Weights: Sum the initial weights of all *found* variables. If any variable was not found, redistribute its weight proportionally across the remaining found variables. The final sum of adjusted weights must be 1.00 (100%).
 - Calculate Estimated Revenue (Ri): All calculations must be in base units of INR (not Cr or L).
   - Ra = (Found Revenue) × (1 + Industry Growth Rate)
@@ -87,7 +89,7 @@ Phase 3: Calculation and Weight Adjustment
   - Predicted Turnover = ∑{for each Found Variable i} (Ri × Adjusted Weight_i)
 
 Phase 4: Structured Output
-- For the 'reasoning' field, provide the final calculation steps in a structured format.
+- For the 'reasoning' field, provide the final calculation steps in a structured format as shown in the example.
 - For the 'sources' array, populate it with all constants and variables found, their values, and the URLs where you found them.
 
 Example for 'reasoning' field:
@@ -98,7 +100,7 @@ Example for 'reasoning' field:
 
 **Calculated Estimated Revenue:**
 - Ra = [Show calculation, e.g., (1300000000) x (1 + 0.12) = 1456000000]
-- Rb = [Show calculation, e.g., 67 x 220000 = 14740000, or "Not calculated (reason)"]
+- Rb = [Show calculation, e.g., 67 * 220000 = 14740000, or "Not calculated (reason)"]
 - ... and so on.
 
 **Predicted Turnover:**
