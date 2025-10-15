@@ -23,7 +23,7 @@ import {
 } from "@/components/ui/command"
 import { useToast } from "@/hooks/use-toast";
 import { getPrediction, type PredictionResult } from "@/app/actions";
-import { industries, type Industry } from "@/lib/industries";
+import { industries } from "@/lib/industries";
 import { cn, formatNumber, formatLargeNumber } from "@/lib/utils";
 import SourceTable from "@/components/SourceTable";
 import ReasoningDisplay from "../ReasoningDisplay";

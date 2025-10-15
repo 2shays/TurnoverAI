@@ -4,7 +4,8 @@ const ReasoningDisplay = ({ reasoning }: { reasoning: string }) => {
   if (!reasoning) return null;
 
   // Find the specific line for "Predicted Turnover"
-  const equationLine = reasoning.split('\n').find(line => line.trim().startsWith('Predicted Turnover:'));
+  const lines = reasoning.split('\n');
+  const equationLine = lines.find(line => line.trim().startsWith('Predicted Turnover:'));
 
   // If the line isn't found, render nothing.
   if (!equationLine) {
