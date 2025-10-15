@@ -55,7 +55,7 @@ Provided Employee Count: {{{employees}}} (Use this for Variable B. Set inferredE
 
 Target Prediction Period: Current Fiscal Year (FY25, assume year ending March 31 of the current calendar year).
 
-Core Constraint: DO NOT use or hallucinate any data point for which reliable, external, and verifiable information cannot be found. If a variable's data is missing after thorough research, it must be dropped and its weight must be redistributed proportionally among the remaining, found variables. For every data point found, you MUST provide the exact, verifiable URL in the 'source' field of the 'sources' array. It is forbidden to invent or guess a URL.
+Core Constraint: DO NOT use or hallucinate any data point for which reliable, external, and verifiable information cannot be found. For every data point found, you MUST provide the exact, verifiable URL in the 'source' field of the 'sources' array. It is forbidden to invent or guess a URL. If you cannot find a valid, working URL for a data point, you MUST treat that data as "Not Found" and drop the variable from the calculation.
 
 Phase 1: Dynamic Profiling and Sourcing
 Identify Industry: {{#if industry}}Use the provided industry: '{{{industry}}}' and set inferredIndustry.{{else}}Analyze the website at {{{url}}} to determine the company's primary industry and sub-sector. Prioritize the company's own description on its "About Us" or "Products" page. Set the result to the 'inferredIndustry' output field.{{/if}}
@@ -74,7 +74,7 @@ You must perform dedicated web searches to find a verifiable data point and its 
 Variable Data to Find (Initial Weight)
 A. Most Recently Reported Revenue (Ra) (50%): Find the **most recently reported** Annual Turnover (Revenue) and its corresponding Fiscal Year.
 B. Employee Benchmark (Rb) (20%): {{#if employees}}Use the provided count of {{{employees}}} and set inferredEmployees.{{else}}First, thoroughly analyze the company website (About Us, Our Team pages) for an employee count. If not found, perform targeted web searches using the same platforms listed above. If you find a range, take the average. Set the result to the 'inferredEmployees' output field. Do not infer 0 unless the company is explicitly a one-person entity.{{/if}}
-C. Product Lines (Rc) (20%): Analyze the company's website to count the number of distinct major Product Lines or service Categories.
+C. Product Lines (Rc) (20%): Analyze the company's website ({{{url}}}) to count the number of distinct major Product Lines or service Categories. The source for this is always the input URL.
 D. Locations (Rd) (10%): Search for the company's "locations", "offices", or "manufacturing plants" to count key domestic/primary operational locations.
 
 Phase 3: Calculation and Weight Adjustment
@@ -90,7 +90,7 @@ Phase 3: Calculation and Weight Adjustment
 
 Phase 4: Structured Output
 - For the 'reasoning' field, provide the final calculation steps in a structured format as shown in the example.
-- For the 'sources' array, populate it with all constants and variables found, their values, and the URLs where you found them.
+- For the 'sources' array, populate it with all constants and variables found, their values, and the real, verifiable URLs where you found them.
 
 Example for 'reasoning' field:
 **Constants:**
