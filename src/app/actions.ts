@@ -1,9 +1,7 @@
 "use server";
 
 import { z } from "zod";
-import { inferIndustryFromUrl } from "@/ai/flows/infer-industry-from-url";
-import { estimateEmployeeCountFromWebsite } from "@/ai/flows/estimate-employee-count-from-website";
-import { predictTurnover, getBenchmarkDataTool } from "@/ai/flows/predict-turnover";
+import { predictTurnover } from "@/ai/flows/predict-turnover";
 import { supabase } from "@/lib/supabaseClient";
 
 
@@ -27,29 +25,24 @@ export async function getPrediction(
     throw new Error("URL is required to get a prediction.");
   }
   try {
-    let inferredIndustryName = manualIndustry;
-    if (!inferredIndustryName) {
-      const industryResult = await inferIndustryFromUrl({ url });
-      inferredIndustryName = industryResult.industry;
-    }
-    
-    let inferredEmployees = manualEmployees;
-    if (!inferredEmployees) {
-      const employeeResult = await estimateEmployeeCountFromWebsite({ websiteUrl: url });
-      inferredEmployees = employeeResult.employeeCount;
-    }
-
     const turnoverPrediction = await predictTurnover({
         url,
-        industry: inferredIndustryName!,
-        employees: inferredEmployees,
+        industry: manualIndustry,
+        employees: manualEmployees,
     });
+
+    // The new prompt doesn't explicitly return inferred employees/industry.
+    // We will need to parse them from the reasoning if needed, or adjust the prompt.
+    // For now, we'll return the manual ones if provided, or placeholders.
+    const inferredIndustry = manualIndustry || "Inferred by AI";
+    const inferredEmployees = manualEmployees || 0; // The AI will infer this, but it's not a direct output field.
+
 
     return {
       predictedTurnover: turnoverPrediction.predictedTurnover,
       confidence: turnoverPrediction.confidenceScore,
-      inferredIndustry: inferredIndustryName!,
-      inferredEmployees,
+      inferredIndustry: inferredIndustry,
+      inferredEmployees: inferredEmployees,
       reasoning: turnoverPrediction.reasoning,
       url,
     };
