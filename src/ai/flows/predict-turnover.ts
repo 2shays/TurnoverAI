@@ -8,7 +8,7 @@
  */
 
 import {ai} from '@/ai/genkit';
-import {z} from 'genkit';
+import {z} from 'zod';
 
 const IndustryBenchmarkSchema = z.object({
   industry: z.string(),
@@ -50,7 +50,7 @@ const predictTurnoverPrompt = ai.definePrompt({
   input: {schema: PredictTurnoverInputSchema},
   output: {schema: PredictTurnoverOutputSchema},
   prompt: `
-You are a highly experience financial analyst executing a comprehensive research and calculation process to predict the current fiscal year (FY25) turnover (revenue) for the target company using a Weighted, Flexible, and Self-Adjusting Prediction Model.
+You are a highly experienced financial analyst executing a comprehensive research and calculation process to predict the current fiscal year (FY25) turnover (revenue) for the target company. Your process MUST be rigorous and transparent.
 
 Input URL: {{{url}}}
 {{#if industry}}
@@ -60,10 +60,10 @@ Provided Industry: {{{industry}}} (Use this industry and skip identification. Se
 Provided Employee Count: {{{employees}}} (Use this for Variable B. Set inferredEmployees to this value.)
 {{/if}}
 {{#if benchmarkData}}
-Reference Database: You have been provided with the following curated benchmark data. Use this as a strong reference point to compare the data on employees and revenue you will be collecting for the target company. This is a reference database make sure to normalize the data according to the information you find of the target company to get an accurate reference.
+Reference Database: You have been provided with the following curated benchmark data from public companies. Use this as a strong reference point to compare the data on employees and revenue you will be collecting for the target company. You must normalize the reference data against the target company's scale.
 {{/if}}
 
-Target Prediction Period: Focus on finding data as close to the current Fiscal Year FY25.
+Target Prediction Period: Focus on finding data as close to the current Fiscal Year FY25 as possible.
 
 Phase 1: Dynamic Profiling and Sourcing
 Identify Industry: {{#if industry}}Use the provided industry: '{{{industry}}}' and set inferredIndustry.{{else}}Analyze the website at {{{url}}} to determine the company's primary industry and sub-sector. Prioritize the company's own description on its "About Us" or "Products" page. Set the result to the 'inferredIndustry' output field.{{/if}}
@@ -89,12 +89,12 @@ Phase 3: Calculation and Weight Adjustment
 **CRITICAL CALCULATION RULE**: Before any calculation, you MUST convert all found values into base units of INR. For example, "130 Cr" becomes 1300000000. If you find an employee range like "11-50", you must use the average (30.5, rounded to 31) for calculation.
 - Adjust Weights: Sum the initial weights of all *found* variables. If any variable was not found, redistribute its weight proportionally across the remaining found variables. The final sum of adjusted weights must be 1.00 (100%).
 - Calculate Estimated Revenue (Ri): All calculations must be in base units of INR (not Cr or L).
-  - Ra = (Found Revenue) × (1 + Industry Growth Rate)
-  - Rb = (Found Employee Count) × RPE
-  - Rc = (Found Product Line Count) × Avg. Rev./Line
-  - Rd = ((Found Location Count) × 15000000) / Rent-to-Revenue Ratio
+  - Ra = (Found Revenue) * (1 + Industry Growth Rate)
+  - Rb = (Found Employee Count) * RPE
+  - Rc = (Found Product Line Count) * Avg. Rev./Line
+  - Rd = ((Found Location Count) * 15000000) / Rent-to-Revenue Ratio
 - Compute Final Predicted Turnover: Apply the adjusted weights to the calculated Ri values for only the *found* variables.
-  - Predicted Turnover = ∑{for each Found Variable i} (Ri × Adjusted Weight_i)
+  - Predicted Turnover = ∑{for each Found Variable i} (Ri * Adjusted Weight_i)
 
 Phase 4: Structured Output
 - **reasoning**: Format the output clearly.
@@ -104,12 +104,12 @@ Phase 4: Structured Output
   - ... and so on for all constants.
   
   **Calculated Estimated Revenue:**
-  - Ra = [Show calculation, e.g., (1300000000) x (1 + 0.12) = 1456000000]
+  - Ra = [Show calculation, e.g., (1300000000) * (1 + 0.12) = 1456000000]
   - Rb = [Show calculation, e.g., 67 * 220000 = 14740000, or "Not calculated (reason)"]
   - ... and so on.
   
   **Predicted Turnover:**
-  - [Show final weighted calculation, e.g., (Ra × 0.833) + (Rd × 0.167) = ...]
+  - [Show final weighted calculation, e.g., (1456000000 * 0.833) + (250000000 * 0.167) = 1420000000]
   
   **Summary:**
   - Used: [List variables used, e.g., Ra, Rd]
