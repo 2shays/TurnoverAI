@@ -97,7 +97,7 @@ Phase 3: Calculation and Weight Adjustment
 **CRITICAL CALCULATION RULE**: Before any calculation, you MUST convert all found values into base units of INR. For example, "130 Cr" becomes 1300000000. If you find an employee range like "11-50", you must use the average (30.5, rounded to 31) for calculation.
 - Adjust Weights: Sum the initial weights of all *found* variables. If any variable was not found, redistribute its weight proportionally across the remaining found variables. The final sum of adjusted weights must be 1.00 (100%).
 - Calculate Estimated Revenue (Ri): All calculations must be in base units of INR (not Cr or L).
-  - Ra = (Found Revenue) * (1 + Industry Growth Rate)
+  - Ra = (Found Revenue) * (1 + Industry Growth Rate) ^ (Number of years to project to FY25). **IMPORTANT**: When writing this calculation, if the number of years is greater than 1, you MUST use \`^\` for exponentiation. For example, \`(1 + 0.08)^2\` instead of \`(1 + 0.08) * (1 + 0.08)\`.
   - Rb = (Found Employee Count) * RPE
   - Rc = (Found Product Line Count) * Avg. Rev./Line
   - Rd = ((Found Location Count) * 15000000) / Rent-to-Revenue Ratio
@@ -110,7 +110,7 @@ Phase 4: Structured Output
 - **sources**: For each Constant and Variable found, create an entry in the 'sources' array.
 - **calculationBreakdown**: Create a structured breakdown for the final calculation. For EACH component used in the final sum:
   - description: A descriptive label. e.g. "Third party revenue data adjusted by Industry Average growth till FY25" for Ra, or "Revenue estimated based on the number of employees for the company" for Rb.
-  - calculation: The string showing the calculation for that component, e.g., "1,30,00,00,000 * 1.12".
+  - calculation: The string showing the calculation for that component, e.g., "1,30,00,00,000 * (1 + 0.12)^2".
   - value: The numerical result of that component's calculation *before* weighting, e.g. 1456000000.
   You will then apply the weights to these values for the final 'predictedTurnover'.
 
