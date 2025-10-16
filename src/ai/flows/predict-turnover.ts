@@ -88,8 +88,8 @@ You must perform dedicated web searches to find a data point for all four compon
 **CRITICAL RESEARCH DIRECTIVE**: Prioritize data from Indian financial data platforms like **Tracxn, Tofler, InstaFinancials, and Zauba Corp**. Also search Indian credit rating agency reports from **CRISIL, ICRA, CARE, and ACUITE**. Always use the **most recently reported** fiscal year data (e.g., prefer FY24 data over FY22).
 
 Variable Data to Find (Initial Weight)
-A. Most Recently Reported Revenue (Ra) (50%): Find the **most recently reported** Annual Turnover (Revenue) and its corresponding Fiscal Year. Use the provided benchmarkData as a primary reference if a company match is found.
-B. Employee Benchmark (Rb) (20%): {{#if employees}}Use the provided count of {{{employees}}} and set inferredEmployees.{{else}}First, thoroughly analyze the company website (About Us, Our Team pages) for an employee count. If not found, perform targeted web searches using the same platforms listed above. If you find a range, take the average. Set the result to the 'inferredEmployees' output field. Do not infer 0 unless the company is explicitly a one-person entity.{{/if}}
+A. Most Recently Reported Revenue (Ra) (50%): Find the **most recently reported** Annual Turnover (Revenue) and its corresponding Fiscal Year. {{#if benchmarkData}}Use the provided benchmarkData as a primary reference. If a company match is found, its revenue is a very strong signal. Otherwise, use companies in the same industry to create a credible estimate.{{/if}}
+B. Employee Benchmark (Rb) (20%): {{#if employees}}Use the provided count of {{{employees}}} and set inferredEmployees.{{else}}First, thoroughly analyze the company website (About Us, Our Team pages) for an employee count. If not found, perform targeted web searches using the same platforms listed above. If you find a range, take the average. {{#if benchmarkData}}Crucially, compare your found employee count with the employee counts for similar companies in the provided benchmarkData to ensure your number is realistic for the industry and company scale. Adjust if necessary based on this reference data.{{/if}} Set the result to the 'inferredEmployees' output field. Do not infer 0 unless the company is explicitly a one-person entity.{{/if}}
 C. Product Lines (Rc) (20%): Analyze the company's website ({{{url}}}) to count the number of distinct major Product Lines or service Categories. The primary source for this is the website itself and most likely found under the products or services page.
 D. Locations (Rd) (10%): Search for the company's "locations", "offices", or "manufacturing plants" to count key domestic/primary operational locations this would mainly be on the companies contact us page.
 
@@ -129,5 +129,3 @@ const predictTurnoverFlow = ai.defineFlow(
     return output!;
   }
 );
-
-    
