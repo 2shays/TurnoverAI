@@ -165,11 +165,13 @@ export default function InteractiveDemo() {
                                     !field.value && "text-muted-foreground"
                                   )}
                                 >
+                                  <span className="truncate">
                                   {field.value
                                     ? industries.find(
                                         (industry) => industry.value === field.value
                                       )?.label ?? field.value
                                     : "Select or type an industry"}
+                                  </span>
                                   <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                                 </Button>
                               </FormControl>
@@ -302,5 +304,3 @@ export default function InteractiveDemo() {
     </section>
   );
 }
-
-    

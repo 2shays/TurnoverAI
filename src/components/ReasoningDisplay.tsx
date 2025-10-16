@@ -17,15 +17,17 @@ const ReasoningDisplay = ({ breakdown, finalTurnover }: { breakdown: Calculation
               <td className="font-mono text-sm px-4 text-center">
                   <Equation text={item.calculation} />
               </td>
-              <td className="text-right font-mono text-sm font-semibold pl-4 whitespace-nowrap">= {formatLargeNumber(item.value)}</td>
+              <td className="font-mono text-sm pl-4 whitespace-nowrap text-right w-px">=</td>
+              <td className="text-right font-mono text-sm font-semibold pl-4 whitespace-nowrap">{formatLargeNumber(item.value)}</td>
             </tr>
           ))}
         </tbody>
       </table>
        <div className="border-t border-dashed my-3"></div>
-        <div className="grid grid-cols-[1fr,auto] items-center gap-x-4 pt-2">
+        <div className="grid grid-cols-[1fr,auto,auto] items-center gap-x-4 pt-2">
             <div className="text-foreground font-bold">Predicted Turnover</div>
-            <div className="text-right font-bold text-primary text-lg whitespace-nowrap">= {formatNumber(finalTurnover)}</div>
+            <div className="font-mono text-sm pl-4 whitespace-nowrap text-right w-px">=</div>
+            <div className="text-right font-bold text-primary text-lg whitespace-nowrap">{formatNumber(finalTurnover)}</div>
         </div>
     </div>
   );
