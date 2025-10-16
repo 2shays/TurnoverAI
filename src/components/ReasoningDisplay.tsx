@@ -5,7 +5,7 @@ const ReasoningDisplay = ({ equation }: { equation: string }) => {
   if (!equation) return null;
 
   // Add the final result to the equation string before splitting.
-  const parts = equation.split(/([\*\+\=])/);
+  const parts = equation.split(/([\*\+\=\(\)])/);
 
   const formattedEquation = parts.map((part, index) => {
     const trimmedPart = part.trim();
@@ -18,6 +18,9 @@ const ReasoningDisplay = ({ equation }: { equation: string }) => {
     if (trimmedPart === '=') {
       return `<span key=${index} class="mx-2 text-lg font-normal">=</span>`;
     }
+    if (trimmedPart === '(' || trimmedPart === ')') {
+        return `<span key=${index}>${trimmedPart}</span>`;
+    }
     // Check if the part is a number and format it
     if (!isNaN(Number(trimmedPart)) && trimmedPart !== '') {
         // Only format large numbers, not the weights like 0.833
@@ -25,7 +28,7 @@ const ReasoningDisplay = ({ equation }: { equation: string }) => {
             return `<span key=${index}>${formatLargeNumber(Number(trimmedPart))}</span>`;
         }
     }
-    // Return original part if it's not a large number (e.g., weights, parentheses)
+    // Return original part if it's not a large number (e.g., weights)
     return `<span key=${index}>${part}</span>`;
   }).join('');
 
