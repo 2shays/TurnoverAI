@@ -273,7 +273,7 @@ export default function InteractiveDemo() {
             ) : prediction?.equation && (
               <Card className="mt-4 w-full bg-secondary/50 text-left">
                 <CardContent className="p-4">
-                    <ReasoningDisplay equation={prediction.equation} />
+                    <ReasoningDisplay equation={prediction.equation} sources={prediction.sources} />
                 </CardContent>
               </Card>
             )}
