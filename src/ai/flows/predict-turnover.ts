@@ -30,14 +30,21 @@ const SourceSchema = z.object({
   value: z.string().describe('The value found for the data point.'),
 });
 
+const CalculationComponentSchema = z.object({
+  description: z.string().describe("Descriptive label for the calculation component, e.g., 'Third party revenue data adjusted by Industry Average growth till FY25'"),
+  calculation: z.string().describe("The calculation for this component, e.g., '56,99,96,160 * 0.50'"),
+  value: z.number().describe("The resulting value of the component calculation."),
+});
+
 const PredictTurnoverOutputSchema = z.object({
   predictedTurnover: z.number().describe('The predicted annual turnover in INR for FY25.'),
   confidenceScore: z.number().describe('A confidence score for the prediction, from 0 to 100.'),
   inferredIndustry: z.string().describe('The industry inferred by the AI.'),
   inferredEmployees: z.number().describe('The employee count inferred by the AI.'),
-  reasoning: z.string().describe('A structured output showing the model, working, and a summary of the reasoning.'),
+  reasoning: z.string().describe('A structured output showing the model, working, and a summary of the reasoning. This is NOT displayed in the UI but is used for debugging.'),
   equation: z.string().describe('The final mathematical equation used for the prediction. e.g., "(1456000000 * 0.833) + (250000000 * 0.167) = 1420000000"'),
   sources: z.array(SourceSchema).describe('An array of objects detailing the data points and their values.'),
+  calculationBreakdown: z.array(CalculationComponentSchema).describe("A structured breakdown of the final turnover calculation, with descriptive labels."),
 });
 export type PredictTurnoverOutput = z.infer<typeof PredictTurnoverOutputSchema>;
 
@@ -98,27 +105,15 @@ Phase 3: Calculation and Weight Adjustment
   - Predicted Turnover = ∑{for each Found Variable i} (Ri * Adjusted Weight_i)
 
 Phase 4: Structured Output
-- **reasoning**: Format the output clearly.
-  **Constants:**
-  - Industry Annual Growth Rate: [Value]
-  - Revenue Per Employee (RPE): [Value in INR]
-  - ... and so on for all constants.
-  
-  **Calculated Estimated Revenue:**
-  - Ra = [Show calculation, e.g., (1300000000) * (1 + 0.12) = 1456000000]
-  - Rb = [Show calculation, e.g., 67 * 220000 = 14740000, or "Not calculated (reason)"]
-  - ... and so on.
-  
-  **Predicted Turnover:**
-  - [Show final weighted calculation, e.g., (1456000000 * 0.833) + (250000000 * 0.167) = 1420000000]
-  
-  **Summary:**
-  - Used: [List variables used, e.g., Ra, Rd]
-  - Dropped: [List variables dropped and why, e.g., Rb (employee count not found)]
-
+- **reasoning**: For debugging only. Keep this concise. Show constants, calculated Ri values, and a summary.
 - **equation**: Place ONLY the final weighted calculation string here. Example: "(1456000000 * 0.833) + (250000000 * 0.167) = 1420000000"
-
 - **sources**: For each Constant and Variable found, create an entry in the 'sources' array.
+- **calculationBreakdown**: Create a structured breakdown for the final calculation. For EACH component used in the final sum:
+  - description: A descriptive label. e.g. "Third party revenue data adjusted by Industry Average growth till FY25" for Ra, or "Revenue estimated based on the number of employees for the company" for Rb.
+  - calculation: The string showing the calculation for that component, e.g., "1,30,00,00,000 * 1.12".
+  - value: The numerical result of that component's calculation *before* weighting, e.g. 1456000000.
+  You will then apply the weights to these values for the final 'predictedTurnover'.
+
 Ensure the overall output is valid JSON matching the PredictTurnoverOutputSchema schema, with 'predictedTurnover' as a number in INR.
   `,
 });
@@ -134,3 +129,5 @@ const predictTurnoverFlow = ai.defineFlow(
     return output!;
   }
 );
+
+    

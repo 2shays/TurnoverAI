@@ -270,10 +270,10 @@ export default function InteractiveDemo() {
                     </div>
                 </CardContent>
               </Card>
-            ) : prediction?.equation && (
+            ) : prediction?.calculationBreakdown && prediction.calculationBreakdown.length > 0 && (
               <Card className="mt-4 w-full bg-secondary/50 text-left">
                 <CardContent className="p-4">
-                    <ReasoningDisplay equation={prediction.equation} sources={prediction.sources} />
+                    <ReasoningDisplay breakdown={prediction.calculationBreakdown} finalTurnover={prediction.predictedTurnover} />
                 </CardContent>
               </Card>
             )}
@@ -302,3 +302,5 @@ export default function InteractiveDemo() {
     </section>
   );
 }
+
+    

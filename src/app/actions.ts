@@ -10,6 +10,12 @@ const SourceSchema = z.object({
   value: z.string(),
 });
 
+const CalculationComponentSchema = z.object({
+  description: z.string(),
+  calculation: z.string(),
+  value: z.number(),
+});
+
 const PredictionResultSchema = z.object({
   predictedTurnover: z.number(),
   confidence: z.number(),
@@ -19,10 +25,13 @@ const PredictionResultSchema = z.object({
   equation: z.string(),
   url: z.string(),
   sources: z.array(SourceSchema),
+  calculationBreakdown: z.array(CalculationComponentSchema),
 });
 
 export type PredictionResult = z.infer<typeof PredictionResultSchema>;
 export type Source = z.infer<typeof SourceSchema>;
+export type CalculationComponent = z.infer<typeof CalculationComponentSchema>;
+
 
 export async function getPrediction(
   url: string,
@@ -60,6 +69,7 @@ export async function getPrediction(
       equation: turnoverPrediction.equation,
       url,
       sources: turnoverPrediction.sources,
+      calculationBreakdown: turnoverPrediction.calculationBreakdown,
     };
   } catch (error) {
     console.error("Error in getPrediction action:", error);
@@ -69,3 +79,5 @@ export async function getPrediction(
     throw new Error("Failed to generate prediction. Please try another URL.");
   }
 }
+
+    
