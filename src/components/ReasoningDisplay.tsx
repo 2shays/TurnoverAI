@@ -29,15 +29,14 @@ const ReasoningDisplay = ({ breakdown, finalTurnover }: { breakdown: Calculation
       </table>
        <div className="border-t border-dashed my-3"></div>
 
-        <div className="text-center font-mono text-xs px-2 py-4">
+      <div className="space-y-3 pt-2">
+        <h4 className="font-semibold text-foreground text-center">Weighted Predicted Turnover</h4>
+        <div className="text-center font-mono text-xs px-2 py-2 flex justify-center items-center flex-wrap">
             <Equation text={weightedSumString} />
+            <span className="font-mono text-xs mx-2">=</span>
+            <span className="font-mono text-xs font-bold text-primary">{formatNumber(finalTurnover)}</span>
         </div>
-
-        <div className="grid grid-cols-[1fr,auto,auto] items-center gap-x-4 pt-2">
-            <div className="text-foreground font-bold">Weighted Predicted Turnover</div>
-            <div className="font-mono text-sm pl-4 whitespace-nowrap text-right w-px">=</div>
-            <div className="text-right font-bold text-primary text-lg whitespace-nowrap">{formatNumber(finalTurnover)}</div>
-        </div>
+      </div>
     </div>
   );
 };
