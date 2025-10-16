@@ -11,9 +11,10 @@ const Equation = ({ text }: { text: string }) => {
     const denominator = parts[1].trim();
     return (
       <div className="inline-flex flex-col items-center justify-center font-mono">
-        <span className="px-2 pb-1 border-b border-foreground">
+        <span className="px-2 pb-1 whitespace-nowrap">
           <Equation text={numerator} />
         </span>
+        <span className="w-full border-b border-foreground"></span>
         <span className="px-2 pt-1">
           <Equation text={denominator} />
         </span>
@@ -55,7 +56,7 @@ const Equation = ({ text }: { text: string }) => {
   });
 
   return (
-    <span>
+    <span className="whitespace-nowrap">
         {formattedParts.reduce((prev, curr, i) => {
             // This avoids adding extra spaces around our controlled spaces
             if (i > 0 && !parts[i-1].match(/\s+/)) {
