@@ -23,18 +23,21 @@ const Equation = ({ text }: { text: string }) => {
 
   // Handle other formatting for non-division strings
   const processChunk = (chunk: string) => {
-    // Format numbers with Indian numbering system, but ignore numbers with decimals (weights)
-    if (!isNaN(Number(chunk)) && !chunk.includes('.')) {
-        return formatLargeNumber(Number(chunk));
+    const cleanedChunk = chunk.trim();
+    // Format numbers with Indian numbering system, but ignore numbers with decimals (weights) and non-numeric parts
+    const isNumeric = !isNaN(parseFloat(cleanedChunk)) && isFinite(cleanedChunk as any);
+    if (isNumeric && !cleanedChunk.includes('.')) {
+        return formatLargeNumber(Number(cleanedChunk));
     }
-    return chunk;
+    return cleanedChunk;
   }
 
   const parts = text
-    .replace(/\*/g, ' x ') // Use multiplication symbol
+    .replace(/\*/g, ' x ')
     .replace(/\(/g, '( ')
     .replace(/\)/g, ' )')
-    .split(' ');
+    .split(/(\s+)/) // Split by spaces but keep them
+    .filter(part => part.trim() !== ''); // Filter out empty strings from multiple spaces
 
   const formattedParts = parts.map((part, index) => {
     if (part.includes('^')) {
@@ -45,14 +48,20 @@ const Equation = ({ text }: { text: string }) => {
         </span>
       );
     }
+    if (part.trim() === 'x') {
+        return <span key={index} className="mx-1">x</span>
+    }
     return <span key={index}>{processChunk(part)}</span>;
   });
 
   return (
     <span>
         {formattedParts.reduce((prev, curr, i) => {
-            if (i === 0) return [curr];
-            return [...prev, ' ', curr];
+            // This avoids adding extra spaces around our controlled spaces
+            if (i > 0 && !parts[i-1].match(/\s+/)) {
+                 return [...prev, ' ', curr];
+            }
+            return [...prev, curr];
         }, [] as React.ReactNode[])}
     </span>
   )
