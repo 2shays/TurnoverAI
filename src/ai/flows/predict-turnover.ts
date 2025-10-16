@@ -34,6 +34,7 @@ const CalculationComponentSchema = z.object({
   description: z.string().describe("Descriptive label for the calculation component, e.g., 'Third party revenue data adjusted by Industry Average growth till FY25'"),
   calculation: z.string().describe("The calculation for this component, e.g., '56,99,96,160 * 0.50'"),
   value: z.number().describe("The resulting value of the component calculation."),
+  weight: z.number().describe("The final adjusted weight (0.0 to 1.0) applied to this component."),
 });
 
 const PredictTurnoverOutputSchema = z.object({
@@ -112,6 +113,7 @@ Phase 4: Structured Output
   - description: A descriptive label. e.g. "Third party revenue data adjusted by Industry Average growth till FY25" for Ra, or "Revenue estimated based on the number of employees for the company" for Rb.
   - calculation: The string showing the calculation for that component, e.g., "1,30,00,00,000 * (1 + 0.12)^2".
   - value: The numerical result of that component's calculation *before* weighting, e.g. 1456000000.
+  - weight: The final adjusted weight (from 0.0 to 1.0) applied to this component in the final calculation.
   You will then apply the weights to these values for the final 'predictedTurnover'.
 
 Ensure the overall output is valid JSON matching the PredictTurnoverOutputSchema schema, with 'predictedTurnover' as a number in INR.

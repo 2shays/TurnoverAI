@@ -14,6 +14,7 @@ const CalculationComponentSchema = z.object({
   description: z.string(),
   calculation: z.string(),
   value: z.number(),
+  weight: z.number(),
 });
 
 const PredictionResultSchema = z.object({
@@ -79,5 +80,3 @@ export async function getPrediction(
     throw new Error("Failed to generate prediction. Please try another URL.");
   }
 }
-
-    
