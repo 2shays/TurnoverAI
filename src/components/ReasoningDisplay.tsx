@@ -1,6 +1,7 @@
 import React from 'react';
 import { formatLargeNumber, formatNumber } from '@/lib/utils';
 import { type CalculationComponent } from '@/app/actions';
+import Equation from './Equation';
 
 const ReasoningDisplay = ({ breakdown, finalTurnover }: { breakdown: CalculationComponent[], finalTurnover: number }) => {
   if (!breakdown || breakdown.length === 0) return null;
@@ -12,7 +13,9 @@ const ReasoningDisplay = ({ breakdown, finalTurnover }: { breakdown: Calculation
         {breakdown.map((item, index) => (
           <div key={index} className="grid grid-cols-3 items-center gap-x-4">
             <div className="col-span-1 text-muted-foreground text-xs">{item.description}</div>
-            <div className="col-span-1 text-center font-mono text-sm">({item.calculation})</div>
+            <div className="col-span-1 text-center font-mono text-sm">
+                <Equation text={item.calculation} />
+            </div>
             <div className="col-span-1 text-right font-mono text-sm font-semibold">= {formatLargeNumber(item.value)}</div>
           </div>
         ))}
@@ -28,5 +31,3 @@ const ReasoningDisplay = ({ breakdown, finalTurnover }: { breakdown: Calculation
 };
 
 export default ReasoningDisplay;
-
-    
