@@ -3,11 +3,21 @@ import React from 'react';
 const ReasoningDisplay = ({ equation }: { equation: string }) => {
   if (!equation) return null;
 
-  // Make it look more like a formula by replacing operators with styled spans
-  const formattedEquation = equation
-    .replace(/\*/g, '<span class="mx-2 text-lg font-normal">×</span>')
-    .replace(/\+/g, '<span class="mx-2 text-lg font-normal">+</span>')
-    .replace(/=/g, '<span class="mx-2 text-lg font-normal">=</span>');
+  // Split the equation by operators to safely construct the HTML
+  const parts = equation.split(/(\s*[\*\+\=]\s*)/);
+
+  const formattedEquation = parts.map((part, index) => {
+    if (part.trim() === '*') {
+      return `<span key=${index} class="mx-2 text-lg font-normal">×</span>`;
+    }
+    if (part.trim() === '+') {
+      return `<span key=${index} class="mx-2 text-lg font-normal">+</span>`;
+    }
+    if (part.trim() === '=') {
+      return `<span key=${index} class="mx-2 text-lg font-normal">=</span>`;
+    }
+    return `<span key=${index}>${part}</span>`;
+  }).join('');
 
   return (
     <div className="text-sm text-left space-y-4">
