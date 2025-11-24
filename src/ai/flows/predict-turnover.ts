@@ -40,6 +40,7 @@ const CalculationComponentSchema = z.object({
 const PredictTurnoverOutputSchema = z.object({
   predictedTurnover: z.number().describe('The predicted annual turnover in INR for FY25.'),
   confidenceScore: z.number().describe('A confidence score for the prediction, from 0 to 100.'),
+  confidenceReasoning: z.string().describe('A brief, one-sentence explanation for the confidence score, to be displayed in the UI.'),
   inferredIndustry: z.string().describe('The industry inferred by the AI.'),
   inferredEmployees: z.number().describe('The employee count inferred by the AI.'),
   reasoning: z.string().describe('A structured output showing the model, working, and a summary of the reasoning. This is NOT displayed in the UI but is used for debugging.'),
@@ -114,7 +115,10 @@ Phase 4: Structured Output
   - calculation: The string showing the calculation for that component, e.g., "1,30,00,00,000 * (1 + 0.12)^2".
   - value: The numerical result of that component's calculation *before* weighting, e.g. 1456000000.
   - weight: The final adjusted weight (from 0.0 to 1.0) applied to this component in the final calculation.
-  You will then apply the weights to these values for the final 'predictedTurnover'.
+- **confidenceScore**: Base this on the recency and quality of data found. High confidence (75-95) for recent, direct financial data (Ra). Medium (50-74) for strong proxies like employee count (Rb). Low (25-49) for weaker proxies. If no reliable data is found, the score can be below 25.
+- **confidenceReasoning**: Provide a brief, one-sentence explanation for the confidence score. Example: "High confidence due to recently reported revenue data from a reliable source." or "Lower confidence as the prediction relies heavily on industry averages."
+
+You will then apply the weights to these values for the final 'predictedTurnover'.
 
 Ensure the overall output is valid JSON matching the PredictTurnoverOutputSchema schema, with 'predictedTurnover' as a number in INR.
   `,

@@ -20,6 +20,7 @@ const CalculationComponentSchema = z.object({
 const PredictionResultSchema = z.object({
   predictedTurnover: z.number(),
   confidence: z.number(),
+  confidenceReasoning: z.string(),
   inferredIndustry: z.string(),
   inferredEmployees: z.number(),
   reasoning: z.string(),
@@ -64,6 +65,7 @@ export async function getPrediction(
     return {
       predictedTurnover: turnoverPrediction.predictedTurnover,
       confidence: turnoverPrediction.confidenceScore,
+      confidenceReasoning: turnoverPrediction.confidenceReasoning,
       inferredIndustry: turnoverPrediction.inferredIndustry,
       inferredEmployees: turnoverPrediction.inferredEmployees,
       reasoning: turnoverPrediction.reasoning,

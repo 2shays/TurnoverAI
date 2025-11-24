@@ -270,6 +270,11 @@ export default function InteractiveDemo() {
                     {isPending ? <Skeleton className="h-5 w-10" /> : <p className="text-lg font-bold text-foreground">{prediction ? `${prediction.confidence}%` : '--%'}</p>}
                   </div>
                   {isPending ? <Skeleton className="h-2.5 w-full mt-2" /> : <Progress value={prediction?.confidence || 0} className="h-2.5" indicatorClassName={getConfidenceColor(prediction?.confidence)} />}
+                  {isPending ? <Skeleton className="h-4 w-full mt-2" /> : prediction?.confidenceReasoning && (
+                    <p className="text-xs text-muted-foreground mt-2 text-center italic">
+                      {prediction.confidenceReasoning}
+                    </p>
+                  )}
                 </div>
               </div>
                <Card className="mt-6 bg-secondary/50 text-left">
