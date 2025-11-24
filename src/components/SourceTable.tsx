@@ -21,14 +21,14 @@ const SourceTable = ({ sources }: { sources: Source[] }) => {
           <TableHeader>
             <TableRow>
               <TableHead>Data Point</TableHead>
-              <TableHead className="text-right">Value</TableHead>
+              <TableHead className="text-left">Value</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {sources.map((item, index) => (
               <TableRow key={index}>
-                <TableCell className="font-medium">{item.name}</TableCell>
-                <TableCell className="text-right">{item.value}</TableCell>
+                <TableCell className="font-medium align-top">{item.name}</TableCell>
+                <TableCell className="text-left align-top">{item.value}</TableCell>
               </TableRow>
             ))}
           </TableBody>

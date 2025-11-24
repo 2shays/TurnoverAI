@@ -22,7 +22,7 @@ import {
   CommandList,
 } from "@/components/ui/command"
 import { useToast } from "@/hooks/use-toast";
-import { getPrediction, type PredictionResult } from "@/app/actions";
+import { getPrediction, type PredictionResult, type Source } from "@/app/actions";
 import { industries } from "@/lib/industries";
 import { cn, formatNumber, formatLargeNumber } from "@/lib/utils";
 import SourceTable from "@/components/SourceTable";
@@ -86,6 +86,34 @@ export default function InteractiveDemo() {
     if (score >= 25) return "bg-orange-500";
     return "bg-red-500";
   };
+  
+  const getOrderedSources = (): Source[] => {
+    if (!prediction || !prediction.sources || !prediction.calculationBreakdown) {
+      return [];
+    }
+  
+    const orderedSourceNames = prediction.calculationBreakdown.map(item => {
+        // This is a bit of a heuristic. It assumes the description maps to a source name.
+        if (item.description.includes('revenue data')) return 'Most Recently Reported Revenue';
+        if (item.description.includes('number of employees')) return 'Employee Count';
+        if (item.description.includes('product lines')) return 'Product Line Count';
+        if (item.description.includes('rent cost')) return 'Location Count';
+        return '';
+    }).filter(Boolean);
+  
+    const orderedSources = orderedSourceNames.map(name => 
+      prediction.sources.find(source => source.name.includes(name))
+    ).filter((s): s is Source => s !== undefined);
+    
+    // Add the remaining sources that weren't part of the calculation
+    const remainingSources = prediction.sources.filter(source => 
+      !orderedSources.some(os => os.name === source.name)
+    );
+  
+    return [...orderedSources, ...remainingSources];
+  };
+
+  const orderedSources = getOrderedSources();
 
 
   return (
@@ -290,10 +318,10 @@ export default function InteractiveDemo() {
                         </div>
                     </CardContent>
               </Card>
-            ) : prediction?.sources && prediction.sources.length > 0 && (
+            ) : orderedSources.length > 0 && (
               <Card className="mt-4 w-full bg-secondary/50 text-left">
                 <CardContent className="p-4">
-                    <SourceTable sources={prediction.sources} />
+                    <SourceTable sources={orderedSources} />
                 </CardContent>
               </Card>
             )}
