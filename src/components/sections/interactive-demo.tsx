@@ -262,7 +262,14 @@ export default function InteractiveDemo() {
               <div className="flex flex-col items-center gap-4 mt-4">
                 <div>
                   <p className="text-muted-foreground">Predicted Annual Turnover (FY25)</p>
-                  {isPending ? <Skeleton className="h-10 w-40 mt-1" /> : <p className="text-4xl font-bold text-primary">{prediction ? formatNumber(prediction.predictedTurnover) : "₹--"}</p>}
+                  {isPending ? (
+                    <div className="flex items-center justify-center gap-2 h-10 mt-1">
+                      <span className="text-muted-foreground">Calculating</span>
+                      <div className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.3s]"></div>
+                      <div className="w-2 h-2 rounded-full bg-primary animate-bounce [animation-delay:-0.15s]"></div>
+                      <div className="w-2 h-2 rounded-full bg-primary animate-bounce"></div>
+                    </div>
+                  ) : <p className="text-4xl font-bold text-primary">{prediction ? formatNumber(prediction.predictedTurnover) : "₹--"}</p>}
                 </div>
                 <div className="w-full max-w-sm">
                   <div className="flex justify-between items-center mb-1">
