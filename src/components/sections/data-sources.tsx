@@ -23,7 +23,7 @@ const referenceData = [
   {
     icon: <Banknote className="h-8 w-8 text-primary" />,
     title: 'Curated Revenue Data',
-    description: 'Uses a Supabase table of public companies as a baseline for revenue estimates.',
+    description: 'Uses the local turnover_rows.csv benchmark sheet of public companies as a baseline for revenue estimates.',
   },
   {
     icon: <Users className="h-8 w-8 text-primary" />,

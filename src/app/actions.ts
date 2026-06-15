@@ -2,7 +2,8 @@
 
 import { z } from "zod";
 import { predictTurnover } from "@/ai/flows/predict-turnover";
-import { supabase } from "@/lib/supabaseClient";
+import { ensureGeminiIsConfigured } from "@/lib/gemini-healthcheck";
+import { loadBenchmarkData } from "@/lib/benchmark-data";
 
 
 const SourceSchema = z.object({
@@ -44,11 +45,12 @@ export async function getPrediction(
     throw new Error("URL is required to get a prediction.");
   }
   try {
-    const { data: benchmarkData, error } = await supabase.from('turnover').select('*');
-    if (error) {
-      console.error('Error fetching benchmark data:', error);
-      // We don't want to fail the whole prediction if this fails, so we'll pass an empty array.
-    }
+    await ensureGeminiIsConfigured();
+
+    const benchmarkData = await loadBenchmarkData().catch(error => {
+      console.error('Error loading benchmark CSV data:', error);
+      return [];
+    });
     
     const turnoverPrediction = await predictTurnover({
         url,
