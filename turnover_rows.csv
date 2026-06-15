@@ -1,0 +1,52 @@
+id,company_name,turnover,employees,industry
+1,Reliance Industries,8715000000000,340000,"Conglomerate (oil & gas, petrochemicals, retail, telecom, media)"
+2,Tata Consultancy Services,2415300000000,603305,Information Technology / IT Services & Consulting
+3,HDFC Bank,2573000000000,207000,Banking / Financial Services
+4,ICICI Bank,1909000000000,155000,Banking / Financial Services
+5,Infosys,1543800000000,322600,Information Technology / IT Services
+6,Hindustan Unilever,622500000000,6126,Fast Moving Consumer Goods (FMCG) / Consumer Products
+7,State Bank of India,4814000000000,245000,Banking / Public Sector Bank
+8,Bharti Airtel,1303100000000,20000,Telecommunications / Telecom Services
+9,ITC,705500000000,36500,"Diversified (Tobacco, FMCG, Hotel, Paper, Packaging)"
+10,Larsen & Toubro,2241000000000,58000,Engineering & Construction / Infrastructure / Heavy Engineering
+11,Bajaj Finance,481400000000,41000,Non-Banking Financial Company (NBFC) / Financial Services
+12,Asian Paints,348600000000,7000,Paints & Coatings / Decorative Coatings
+13,Kotak Mahindra Bank,996000000000,100000,Banking / Financial Services
+14,Axis Bank,1162000000000,91000,Banking / Financial Services
+15,Wipro,913000000000,245000,Information Technology / IT Services
+16,Maruti Suzuki India,1211800000000,48000,Automobile / Passenger Vehicles
+17,Tata Motors,4523500000000,81000,Automotive / Commercial & Passenger Vehicles
+18,JSW Steel,1950500000000,13000,Steel / Heavy Industry / Metals & Mining
+19,Mahindra & Mahindra,1203500000000,74000,Automotive & Farm Equipment / Automobile & Farm Machinery
+20,UltraTech Cement,647400000000,24000,Cement / Building Materials
+21,Bajaj Auto,398400000000,9700,Automobile / Two & Three Wheelers
+22,IndusInd Bank,738700000000,37000,Banking / Financial Services
+23,Adani Ports & SEZ,240700000000,3000,Ports & Logistics / Infrastructure
+24,HCL Technologies,1045800000000,225000,Information Technology / IT Services
+25,Vedanta,1485700000000,102000,Metals & Mining / Natural Resources
+26,CCL Products India,19500000000,1600,"Agri / Coffee & Commodities (Coffee exporter, Specialty ingredients)"
+27,NGL Fine-Chem,2650000000,285,Specialty Chemicals / Chemicals
+28,Apar Industries,151000000000,2900,"Electrical Equipment / Specialty Manufacturing (e.g. conductors, oils)"
+29,Deepak Nitrite,78500000000,1500,Specialty Chemicals / Chemicals
+30,Caplin Point Laboratories,17500000000,1800,Pharmaceuticals / Generic Drugs
+31,Vaibhav Global,27000000000,3500,Retail / Home Shopping / E-Commerce / Lifestyle Products
+32,Fineotex Chemical,1900000000,100,Specialty Chemicals / Textile Chemicals
+33,Shivalik Bimetal Controls,3000000000,300,Engineering / Flow Control / Valve & Metering Equipment
+34,Roto Pumps,2800000000,300,Pumps & Engineering / Fluid Handling Equipment
+35,Triveni Engineering & Industries,62500000000,15000,Diversified / Engineering & Sugar & Water Solutions
+36,Garware Technical Fibres,12000000000,1800,Technical Textiles / Industrial Textiles
+37,Lux Industries,23500000000,1500,Apparel / Innerwear & Garments
+38,Neogen Chemicals,6500000000,500,Specialty Chemicals / Fine Chemicals
+39,Kaveri Seed Company,5000000000,800,Agritech / Seeds / Agriculture Inputs
+40,Polyplex Corporation,60000000000,2500,Packaging Films / Plastics / Polyethylene Film Manufacturing
+41,VIP Industries,18000000000,1400,Luggage / Travel Goods / Consumer Durable Goods
+42,Balaji Amines,23000000000,1000,Specialty Chemicals / Amines & Intermediates
+43,EID Parry India,200000000000,15000,Sugar / Agriculture & Bio-Products / Agri Inputs
+44,Avanti Feeds,48000000000,1200,Aquaculture / Marine Products / Fish Feed & Seafood
+45,Indraprastha Medical Corp,8000000000,1100,Healthcare Services / Hospitals / Medical Centres
+46,Aster DM Healthcare,90000000000,20000,Healthcare / Hospitals & Clinics
+47,J.B. Chemicals & Pharmaceuticals,24000000000,2500,Pharmaceuticals / Drug Manufacturing
+48,Ajanta Pharma,30000000000,6000,Pharmaceuticals / Generic Drugs
+49,Alkem Laboratories,110000000000,18000,Pharmaceuticals / Drugs & Healthcare
+50,Sanofi India,60000000000,2500,Pharmaceuticals / Multinational Pharma
+51,GlaxoSmithKline Pharmaceuticals,30000000000,4000,Pharmaceuticals / Biopharma
