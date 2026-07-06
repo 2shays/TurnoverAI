@@ -1,4 +1,7 @@
 import { config } from 'dotenv';
-config();
+import { existsSync } from 'fs';
 
-import '@/ai/flows/predict-turnover.ts';
+const envPath = existsSync('.env.local') ? '.env.local' : '.env';
+config({ path: envPath });
+
+import '@/ai/flows/predict-turnover';
