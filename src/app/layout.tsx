@@ -10,8 +10,8 @@ export const metadata: Metadata = {
   title: 'TurnoverAI',
   description: 'AI-Powered Private Company Turnover Prediction',
   icons: {
-    icon: '/turnoverai_favicon.ico',
-    shortcut: '/turnoverai_favicon.ico',
+    icon: '/favicon.ico',
+    shortcut: '/favicon.ico',
   },
 };
 
