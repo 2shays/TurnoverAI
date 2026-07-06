@@ -9,6 +9,10 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-sans' })
 export const metadata: Metadata = {
   title: 'TurnoverAI',
   description: 'AI-Powered Private Company Turnover Prediction',
+  icons: {
+    icon: '/turnoverai_favicon.ico',
+    shortcut: '/turnoverai_favicon.ico',
+  },
 };
 
 export default function RootLayout({
